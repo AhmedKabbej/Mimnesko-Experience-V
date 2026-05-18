@@ -5,38 +5,46 @@ import './App.css'
 
 function App() {
   const [showIntro, setShowIntro] = useState(true)
+
   const containerRef = useRef<HTMLDivElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const titleRef = useRef<HTMLParagraphElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  // Text split by words (to avoid breaking words) - cleaner approach
+  // 🎵 AUDIO REF
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  // Text split by words
   const splitTextByWords = (element: HTMLElement | null) => {
     if (!element) return []
     const text = element.textContent || ''
     const words = text.split(/\s+/)
+
     element.innerHTML = words
       .map((word) => `<span class="text-word">${word}</span>`)
       .join(' ')
+
     return gsap.utils.toArray('.text-word')
   }
+
+  // 🎵 INIT AUDIO ONCE
+  useEffect(() => {
+    audioRef.current = new Audio('/mp3/mimnesko.MP3')
+    audioRef.current.preload = 'auto'
+  }, [])
 
   useEffect(() => {
     if (showIntro) return
 
-    // Split text into words
     const subtitleWords = splitTextByWords(subtitleRef.current)
     const titleWords = splitTextByWords(titleRef.current)
 
-    // Intro animation timeline
     const tl = gsap.timeline()
 
-    // Set initial states
     gsap.set([subtitleWords, titleWords, buttonRef.current], { opacity: 0 })
     gsap.set(subtitleWords, { y: 10 })
     gsap.set(titleWords, { y: 10 })
 
-    // Subtitle: staggered word animation
     tl.to(
       subtitleWords,
       {
@@ -44,14 +52,11 @@ function App() {
         y: 0,
         duration: 0.4,
         ease: 'power2.out',
-        stagger: {
-          amount: 0.3,
-        },
+        stagger: { amount: 0.3 },
       },
       0
     )
 
-    // Title: staggered word animation with slight delay
     tl.to(
       titleWords,
       {
@@ -59,14 +64,11 @@ function App() {
         y: 0,
         duration: 0.4,
         ease: 'power2.out',
-        stagger: {
-          amount: 0.4,
-        },
+        stagger: { amount: 0.4 },
       },
-      0.5 // décalage pour que le titre commence après le sous-titre
+      0.5
     )
 
-    // Button: fade in + scale (décalé après le texte)
     tl.to(
       buttonRef.current,
       {
@@ -76,10 +78,9 @@ function App() {
         duration: 0.6,
         ease: 'back.out(1.5)',
       },
-      1.1 // le bouton commence après l'animation du texte
+      1.1
     )
 
-    // Subtle hover animation
     const button = buttonRef.current
     if (button) {
       const handleMouseEnter = () => {
@@ -112,17 +113,28 @@ function App() {
 
   const handleCreateWalk = () => {
     // Click animation
-    gsap.timeline().to(buttonRef.current, {
-      scale: 0.95,
-      duration: 0.1,
-    }).to(
-      buttonRef.current,
-      {
-        scale: 1,
+    gsap
+      .timeline()
+      .to(buttonRef.current, {
+        scale: 0.95,
         duration: 0.1,
-      },
-      0.1
-    )
+      })
+      .to(
+        buttonRef.current,
+        {
+          scale: 1,
+          duration: 0.1,
+        },
+        0.1
+      )
+
+    // 🎵 PLAY SOUND
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0
+      audioRef.current.play().catch((err) => {
+        console.warn('Audio play blocked:', err)
+      })
+    }
 
     console.log('Create walk clicked')
   }
@@ -130,10 +142,14 @@ function App() {
   return (
     <>
       {showIntro && <Intro onComplete={() => setShowIntro(false)} />}
+
       <div
         className="app-container"
         ref={containerRef}
-        style={{ opacity: showIntro ? 0 : 1, pointerEvents: showIntro ? 'none' : 'auto' }}
+        style={{
+          opacity: showIntro ? 0 : 1,
+          pointerEvents: showIntro ? 'none' : 'auto',
+        }}
       >
         <div className="content-wrapper">
           <div className="card-container">
@@ -141,15 +157,21 @@ function App() {
               <p className="subtitle" ref={subtitleRef}>
                 C'est ici que tout commence.
               </p>
+
               <p className="title" ref={titleRef}>
                 Marche, ressens, capture… et laisse tes souvenirs prendre vie.
               </p>
             </div>
+
             <button
               className="primary-button"
               ref={buttonRef}
               onClick={handleCreateWalk}
-              style={showIntro ? { opacity: 0, pointerEvents: 'none' } : {}}
+              style={
+                showIntro
+                  ? { opacity: 0, pointerEvents: 'none' }
+                  : undefined
+              }
             >
               Créer une balade Mimnesko
             </button>
