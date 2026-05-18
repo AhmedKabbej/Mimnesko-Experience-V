@@ -1,0 +1,199 @@
+/* ==================== HERO SECTION ==================== */
+.app-container {
+  width: 100%;
+  height: 100vh;
+  background: var(--gradient-bg-primary), var(--gradient-bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ==================== CONTENT WRAPPER ==================== */
+.content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 var(--spacing-2xl);
+}
+
+/* ==================== CARD CONTAINER ==================== */
+.card-container {
+  width: 100%;
+  max-width: 448px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xl);
+}
+
+/* ==================== TEXT SECTION ==================== */
+.text-section {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  align-items: center;
+  margin: 0;
+}
+
+/* ==================== TYPOGRAPHY ==================== */
+.subtitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: 0.1996px;
+  color: var(--color-gray-1);
+  opacity: var(--opacity-light);
+  margin: 0;
+  text-align: center;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-relaxed);
+  letter-spacing: -0.3125px;
+  color: var(--color-gray-2);
+  opacity: var(--opacity-medium);
+  margin: 0;
+  text-align: center;
+  word-wrap: break-word;
+  width: 320px;
+  display: inline-block;
+}
+
+/* Text word split animation */
+.text-word {
+  display: inline;
+  white-space: nowrap;
+}
+
+/* ==================== BUTTON ==================== */
+.primary-button {
+  width: 286.375px;
+  height: 64px;
+  background-color: var(--color-dark);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: -0.3125px;
+  color: var(--color-light-gray-1);
+  cursor: pointer;
+  font-family: var(--font-family);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+}
+
+.primary-button:hover {
+  background-color: var(--color-black);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.primary-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.primary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==================== RESPONSIVE STYLES ==================== */
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 0 var(--spacing-md);
+    min-height: 100vh;
+  }
+
+  .card-container {
+    max-width: 393px;
+    gap: var(--spacing-lg);
+  }
+
+  .text-section {
+    width: 320px;
+    gap: var(--spacing-md);
+    margin: 0;
+  }
+
+  .primary-button {
+    width: 286px;
+    height: 64px;
+    margin-top: 0;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .content-wrapper {
+    padding: var(--spacing-md);
+  }
+
+  .card-container {
+    max-width: 100%;
+    gap: var(--spacing-lg);
+  }
+
+  .text-section {
+    width: 100%;
+    gap: var(--spacing-md);
+    margin: 0;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .title {
+    font-size: 14px;
+    line-height: 22px;
+    width: 100%;
+  }
+
+  .primary-button {
+    width: 100%;
+    height: 56px;
+    font-size: 14px;
+    margin-top: 0;
+  }
+}
+
+/* Small devices (320px and below) */
+@media (max-width: 320px) {
+  .card-container {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .subtitle {
+    font-size: 12px;
+    white-space: normal;
+  }
+
+  .title {
+    font-size: 13px;
+  }
+
+  .primary-button {
+    font-size: 13px;
+    height: 52px;
+  }
+}
