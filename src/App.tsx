@@ -11,7 +11,7 @@ function App() {
   const titleRef = useRef<HTMLParagraphElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  // 🎵 AUDIO REF
+  // AUDIO REF
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // Text split by words
