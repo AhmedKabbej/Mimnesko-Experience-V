@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import Intro from './Intro'
+import Memory3D from './Memory3D'
 import './App.css'
+
+type ExperienceType = 'intro' | 'gallery2d'
 
 function App() {
   const [showIntro, setShowIntro] = useState(true)
+  const [experience, setExperience] = useState<ExperienceType>('intro')
 
   const containerRef = useRef<HTMLDivElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
@@ -31,6 +35,14 @@ function App() {
   useEffect(() => {
     audioRef.current = new Audio('/mp3/mimnesko.MP3')
     audioRef.current.preload = 'auto'
+    audioRef.current.loop = true
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current.currentTime = 0
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -128,15 +140,32 @@ function App() {
         0.1
       )
 
-    // 🎵 PLAY SOUND
+    // 🎵 PLAY AUDIO
     if (audioRef.current) {
       audioRef.current.currentTime = 0
-      audioRef.current.play().catch((err) => {
-        console.warn('Audio play blocked:', err)
+      audioRef.current.play().catch((error) => {
+        console.log('Audio playback failed:', error)
       })
     }
 
-    console.log('Create walk clicked')
+    // Navigate to memory experience
+    setExperience('gallery2d')
+  }
+
+  const handleBackFromExperience = () => {
+    // 🎵 STOP AUDIO
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+    }
+
+    setExperience('intro')
+    setShowIntro(false)
+  }
+
+  // Show gallery experiences
+  if (experience === 'gallery2d') {
+    return <Memory3D onBack={handleBackFromExperience} />
   }
 
   return (
