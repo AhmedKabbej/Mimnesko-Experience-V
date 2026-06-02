@@ -33,7 +33,7 @@ export default function Gallery3D({ onBack }: Gallery3DProps) {
           loadedItems.push({
             image: imagePath,
             link: '',
-            title: `Memory ${i}`,
+            title: `Theme de la generation ${i}`,
             description: `Souvenir #${i}`,
           })
         } catch (e) {

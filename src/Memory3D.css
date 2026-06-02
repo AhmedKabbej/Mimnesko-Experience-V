@@ -10,23 +10,31 @@
 /* ==================== BACK BUTTON ==================== */
 .memory-back-btn {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  top: 24px;
+  left: 24px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px; /* espace entre la flèche et le texte */
+
+  padding: 10px 16px;
+
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+
   color: white;
-  font-size: 1rem;
-  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+
   cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  z-index: 100;
+  transition: all 0.25s ease;
 }
 
 .memory-back-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
 }
 
