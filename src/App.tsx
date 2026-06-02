@@ -1,14 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import gsap from 'gsap'
-import Intro from './Intro'
-import Memory3D from './Memory3D'
+import Intro from './screens/Intro'
+import LoadingTransition from './components/LoadingTransition'
 import './App.css'
+
+const Memory3D = lazy(() => import('./screens/Memory3D'))
 
 type ExperienceType = 'intro' | 'gallery2d'
 
 function App() {
   const [showIntro, setShowIntro] = useState(true)
   const [experience, setExperience] = useState<ExperienceType>('intro')
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [isReturning, setIsReturning] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
@@ -123,24 +127,13 @@ function App() {
     }
   }, [showIntro])
 
+
   const handleCreateWalk = () => {
-    // Click animation
     gsap
       .timeline()
-      .to(buttonRef.current, {
-        scale: 0.95,
-        duration: 0.1,
-      })
-      .to(
-        buttonRef.current,
-        {
-          scale: 1,
-          duration: 0.1,
-        },
-        0.1
-      )
+      .to(buttonRef.current, { scale: 0.95, duration: 0.1 })
+      .to(buttonRef.current, { scale: 1, duration: 0.1 }, 0.1)
 
-    // 🎵 PLAY AUDIO
     if (audioRef.current) {
       audioRef.current.currentTime = 0
       audioRef.current.play().catch((error) => {
@@ -148,65 +141,83 @@ function App() {
       })
     }
 
-    // Navigate to memory experience
-    setExperience('gallery2d')
+    setIsTransitioning(true)
   }
 
   const handleBackFromExperience = () => {
-    // 🎵 STOP AUDIO
     if (audioRef.current) {
       audioRef.current.pause()
       audioRef.current.currentTime = 0
     }
 
-    setExperience('intro')
-    setShowIntro(false)
-  }
-
-  // Show gallery experiences
-  if (experience === 'gallery2d') {
-    return <Memory3D onBack={handleBackFromExperience} />
+    setIsReturning(true)
   }
 
   return (
     <>
-      {showIntro && <Intro onComplete={() => setShowIntro(false)} />}
+      {isTransitioning && (
+        <LoadingTransition
+          onMidpoint={() => setExperience('gallery2d')}
+          onComplete={() => setIsTransitioning(false)}
+        />
+      )}
 
-      <div
-        className="app-container"
-        ref={containerRef}
-        style={{
-          opacity: showIntro ? 0 : 1,
-          pointerEvents: showIntro ? 'none' : 'auto',
-        }}
-      >
-        <div className="content-wrapper">
-          <div className="card-container">
-            <div className="text-section">
-              <p className="subtitle" ref={subtitleRef}>
-                C'est ici que tout commence.
-              </p>
+      {isReturning && (
+        <LoadingTransition
+          circleColor="#ffffff"
+          textColor="#000000"
+          onMidpoint={() => { setExperience('intro'); setShowIntro(false) }}
+          onComplete={() => setIsReturning(false)}
+        />
+      )}
 
-              <p className="title" ref={titleRef}>
-                Marche, ressens, capture… et laisse tes souvenirs prendre vie.
-              </p>
+      {experience === 'gallery2d' && (
+        <Suspense fallback={null}>
+          <Memory3D onBack={handleBackFromExperience} />
+        </Suspense>
+      )}
+
+      {experience !== 'gallery2d' && (
+        <>
+          {showIntro && <Intro onComplete={() => setShowIntro(false)} />}
+
+          <div
+            className="app-container"
+            ref={containerRef}
+            style={{
+              opacity: showIntro ? 0 : 1,
+              pointerEvents: showIntro ? 'none' : 'auto',
+            }}
+          >
+            <div className="content-wrapper">
+              <div className="card-container">
+                <div className="text-section">
+                  <p className="subtitle" ref={subtitleRef}>
+                    C'est ici que tout commence.
+                  </p>
+
+                  <p className="title" ref={titleRef}>
+                    Marche, ressens, capture… et laisse tes souvenirs prendre vie.
+                  </p>
+                </div>
+
+                <button
+                  className="primary-button"
+                  ref={buttonRef}
+                  onClick={handleCreateWalk}
+                  style={
+                    showIntro
+                      ? { opacity: 0, pointerEvents: 'none' }
+                      : undefined
+                  }
+                >
+                  Créer une balade Mimnesko
+                </button>
+              </div>
             </div>
-
-            <button
-              className="primary-button"
-              ref={buttonRef}
-              onClick={handleCreateWalk}
-              style={
-                showIntro
-                  ? { opacity: 0, pointerEvents: 'none' }
-                  : undefined
-              }
-            >
-              Créer une balade Mimnesko
-            </button>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </>
   )
 }
