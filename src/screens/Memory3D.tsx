@@ -4,8 +4,7 @@ import './Memory3D.css'
 
 const ModelViewer = lazy(() => import('../components/ModelViewer'))
 
-const MODEL_URL =
-  'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/ToyCar/glTF-Binary/ToyCar.glb'
+const MODEL_URL = '/models/APPLE.glb'
 
 interface MenuItem {
   image: string
