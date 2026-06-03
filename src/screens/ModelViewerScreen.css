@@ -1,0 +1,70 @@
+.mvs-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: mvs-fade-in 0.25s ease;
+}
+
+@keyframes mvs-fade-in {
+  from { opacity: 0 }
+  to   { opacity: 1 }
+}
+
+.mvs-popup-card {
+  position: relative;
+  background: rgba(15, 10, 5, 0.92);
+  border: 1px solid rgba(255, 200, 80, 0.3);
+  border-radius: 24px;
+  padding: 52px 60px 48px;
+  max-width: 400px;
+  width: 88%;
+  text-align: center;
+  box-shadow:
+    0 0 40px rgba(255, 180, 40, 0.15),
+    0 24px 60px rgba(0, 0, 0, 0.6);
+  animation: mvs-card-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes mvs-card-in {
+  from { opacity: 0; transform: scale(0.88) translateY(12px) }
+  to   { opacity: 1; transform: scale(1)    translateY(0)    }
+}
+
+.mvs-popup-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.15s ease;
+  padding: 4px;
+}
+
+.mvs-popup-close:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.mvs-popup-icon {
+  font-size: 52px;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.mvs-popup-text {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: rgba(255, 240, 200, 0.95);
+  margin: 0;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}

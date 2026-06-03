@@ -7,36 +7,22 @@
   overflow: hidden;
 }
 
-/* ==================== BACK BUTTON ==================== */
-.memory-back-btn {
+
+/* ==================== GALLERY 3D BUTTON ==================== */
+/* ==================== NAV HINT ==================== */
+.memory-nav-hint {
   position: absolute;
-  top: 24px;
-  left: 24px;
-
-  display: flex;
-  align-items: center;
-  gap: 10px; /* espace entre la flèche et le texte */
-
-  padding: 10px 16px;
-
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-
-  color: white;
-  font-size: 0.95rem;
-  font-weight: 500;
-
-  cursor: pointer;
-  transition: all 0.25s ease;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 10;
 }
 
-.memory-back-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
 
 /* ==================== GALLERY 3D BUTTON ==================== */
 .memory-gallery3d-btn {
