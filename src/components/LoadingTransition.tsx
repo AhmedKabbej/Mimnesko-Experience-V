@@ -58,9 +58,9 @@ export default function LoadingTransition({ onMidpoint, onComplete, circleColor 
 
     const maxRadius = Math.sqrt(W * W + H * H)
 
-    const FILL = 2300  // ms — croissance des cercles
-    const HOLD = 700   // ms — pause sur le noir
-    const FADE = 1000  // ms — fondu pour révéler Memory3D
+    const FILL = 2000  // ms — croissance des cercles
+    const HOLD = 300   // ms — pause sur le noir
+    const FADE = 600   // ms — fondu pour révéler Memory3D
 
     let startTime: number | null = null
     let midpointFired = false

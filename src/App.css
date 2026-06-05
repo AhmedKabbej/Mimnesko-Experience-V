@@ -1,34 +1,9 @@
-/* ==================== SETTINGS ICON BUTTON ==================== */
-.settings-icon-btn {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-dark);
-  backdrop-filter: blur(8px);
-  transition: background var(--transition-fast), transform var(--transition-fast);
-  z-index: 10;
-}
-
-.settings-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.95);
-  transform: rotate(22deg);
-}
-
 /* ==================== HERO SECTION ==================== */
 .app-container {
   position: relative;
   width: 100%;
   height: 100vh;
-  background: var(--gradient-bg-primary), var(--gradient-bg-secondary);
+  background: var(--gradient-bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,11 +44,12 @@
 /* ==================== TYPOGRAPHY ==================== */
 .subtitle {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-medium);
   line-height: var(--line-height-tight);
-  letter-spacing: 0.1996px;
-  color: var(--color-gray-1);
-  opacity: var(--opacity-light);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-orange);
+  opacity: 0.85;
   margin: 0;
   text-align: center;
   white-space: nowrap;
@@ -84,8 +60,8 @@
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-relaxed);
-  letter-spacing: -0.3125px;
-  color: var(--color-gray-2);
+  letter-spacing: -0.2px;
+  color: var(--color-content-primary);
   opacity: var(--opacity-medium);
   margin: 0;
   text-align: center;
@@ -94,27 +70,26 @@
   display: inline-block;
 }
 
-/* Text word split animation */
 .text-word {
   display: inline;
   white-space: nowrap;
 }
 
-/* ==================== BUTTON ==================== */
+/* ==================== PRIMARY BUTTON ==================== */
 .primary-button {
-  width: 286.375px;
-  height: 64px;
-  background-color: var(--color-dark);
+  width: 286px;
+  height: 56px;
+  background: var(--gradient-orange-btn);
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-full);
   font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-normal);
-  letter-spacing: -0.3125px;
-  color: var(--color-light-gray-1);
+  letter-spacing: -0.2px;
+  color: #ffffff;
   cursor: pointer;
   font-family: var(--font-family);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-orange);
   transition: all var(--transition-base);
   display: flex;
   align-items: center;
@@ -124,102 +99,40 @@
 }
 
 .primary-button:hover {
-  background-color: var(--color-black);
-  box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(255, 106, 0, 0.40);
+  filter: brightness(1.05);
 }
 
 .primary-button:active {
   transform: translateY(0);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-orange);
 }
 
 .primary-button:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
-/* ==================== RESPONSIVE STYLES ==================== */
-
-/* Tablet (768px and below) */
+/* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
-  .content-wrapper {
-    padding: 0 var(--spacing-md);
-    min-height: 100vh;
-  }
-
-  .card-container {
-    max-width: 393px;
-    gap: var(--spacing-lg);
-  }
-
-  .text-section {
-    width: 320px;
-    gap: var(--spacing-md);
-    margin: 0;
-  }
-
-  .primary-button {
-    width: 286px;
-    height: 64px;
-    margin-top: 0;
-  }
+  .content-wrapper { padding: 0 var(--spacing-md); }
+  .card-container   { max-width: 393px; gap: var(--spacing-lg); }
+  .text-section     { width: 320px; gap: var(--spacing-md); }
+  .primary-button   { width: 286px; height: 56px; margin-top: 0; }
 }
 
-/* Mobile (480px and below) */
 @media (max-width: 480px) {
-  .content-wrapper {
-    padding: var(--spacing-md);
-  }
-
-  .card-container {
-    max-width: 100%;
-    gap: var(--spacing-lg);
-  }
-
-  .text-section {
-    width: 100%;
-    gap: var(--spacing-md);
-    margin: 0;
-  }
-
-  .subtitle {
-    font-size: 13px;
-    line-height: 18px;
-  }
-
-  .title {
-    font-size: 14px;
-    line-height: 22px;
-    width: 100%;
-  }
-
-  .primary-button {
-    width: 100%;
-    height: 56px;
-    font-size: 14px;
-    margin-top: 0;
-  }
+  .content-wrapper  { padding: var(--spacing-md); }
+  .card-container   { max-width: 100%; }
+  .text-section     { width: 100%; }
+  .subtitle         { font-size: 12px; white-space: normal; }
+  .title            { font-size: 14px; line-height: 22px; width: 100%; }
+  .primary-button   { width: 100%; height: 52px; font-size: 15px; margin-top: 0; }
 }
 
-/* Small devices (320px and below) */
 @media (max-width: 320px) {
-  .card-container {
-    padding: 0 var(--spacing-sm);
-  }
-
-  .subtitle {
-    font-size: 12px;
-    white-space: normal;
-  }
-
-  .title {
-    font-size: 13px;
-  }
-
-  .primary-button {
-    font-size: 13px;
-    height: 52px;
-  }
+  .card-container { padding: 0 var(--spacing-sm); }
+  .primary-button { font-size: 14px; height: 50px; }
 }
