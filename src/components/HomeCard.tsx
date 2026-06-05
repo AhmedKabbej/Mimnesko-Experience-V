@@ -4,6 +4,7 @@ import { useTextSplitAnimation } from '../hooks/useTextSplitAnimation'
 interface HomeCardProps {
   visible: boolean
   onCreateWalk: () => void
+  onSettings: () => void
 }
 
 export default function HomeCard({ visible, onCreateWalk }: HomeCardProps) {

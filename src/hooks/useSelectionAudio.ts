@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
 
 export function useSelectionAudio() {
-  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const audioRef       = useRef<HTMLAudioElement | null>(null)
   const retourAudioRef = useRef<HTMLAudioElement | null>(null)
+  const mimAudioRef    = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     audioRef.current = new Audio('/mp3/selectionScreen.MP3')
@@ -11,9 +12,13 @@ export function useSelectionAudio() {
     retourAudioRef.current = new Audio('/mp3/retour.MP3')
     retourAudioRef.current.preload = 'auto'
 
+    mimAudioRef.current = new Audio('/mp3/mimnesko.MP3')
+    mimAudioRef.current.preload = 'auto'
+
     return () => {
       audioRef.current?.pause()
       retourAudioRef.current?.pause()
+      mimAudioRef.current?.pause()
     }
   }, [])
 
@@ -35,5 +40,17 @@ export function useSelectionAudio() {
     retourAudioRef.current.play().catch(() => {})
   }
 
-  return { play, stop, playRetour }
+  const playMimnesko = () => {
+    if (!mimAudioRef.current) return
+    mimAudioRef.current.currentTime = 0
+    mimAudioRef.current.play().catch(() => {})
+  }
+
+  const stopMimnesko = () => {
+    if (!mimAudioRef.current) return
+    mimAudioRef.current.pause()
+    mimAudioRef.current.currentTime = 0
+  }
+
+  return { play, stop, playRetour, playMimnesko, stopMimnesko }
 }

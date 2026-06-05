@@ -1,0 +1,106 @@
+/* ==================== BOTTOM NAV ==================== */
+
+.bn-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  display: flex;
+  align-items: stretch;
+  z-index: 100;
+  /* Safe area for iPhone notch */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.bn-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-gray-1);
+  transition: color var(--transition-fast);
+  padding: 8px 4px;
+  position: relative;
+}
+
+.bn-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--color-dark);
+  border-radius: 0 0 2px 2px;
+  transition: width var(--transition-fast);
+}
+
+.bn-item--active { color: var(--color-dark); }
+
+.bn-item--active::before { width: 24px; }
+
+.bn-icon--active { color: var(--color-dark); }
+
+.bn-label {
+  font-family: var(--font-family);
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.02em;
+  transition: color var(--transition-fast);
+}
+
+/* ==================== PC (≥ 900px) ==================== */
+@media (min-width: 900px) {
+  .bn-nav {
+    /* Shift to top horizontal bar on PC */
+    bottom: auto;
+    top: 0;
+    height: 60px;
+    border-top: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    padding-bottom: 0;
+    /* Limit nav items to left side, leave room for right */
+    justify-content: flex-start;
+    padding: 0 40px;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.97);
+  }
+
+  .bn-item {
+    flex: none;
+    flex-direction: row;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+  }
+
+  .bn-item::before {
+    top: auto;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    border-radius: 2px 2px 0 0;
+  }
+
+  .bn-item--active::before { width: 100%; }
+
+  .bn-label {
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+@media (min-width: 1280px) {
+  .bn-nav { padding: 0 72px; }
+}

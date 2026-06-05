@@ -15,7 +15,7 @@ export default function Memory3D({ onBack, onOpenModel }: Memory3DProps) {
     <div className="memory-3d-wrapper">
       <InfiniteMenu items={items} scale={1.0} onActionClick={onOpenModel} />
       <BackButton onClick={onBack} />
-      <p className="memory-nav-hint">Faites glisser depuis le centre des images pour naviguer</p>
+      <p className="memory-nav-hint">Faites cliquer et glisser depuis le centre des images pour naviguer</p>
     </div>
   )
 }

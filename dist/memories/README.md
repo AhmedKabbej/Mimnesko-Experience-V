@@ -11,34 +11,18 @@ Ajoutez vos images avec les noms:
 - `memory-4.jpg`
 - etc...
 
-## Titres & Thèmes
+## Mise à jour
 
-Chaque souvenir s'affiche avec un grand titre **Mémoire X** et un thème de nostalgie :
+Modifiez le tableau `memories` dans [Memory3D.tsx](../../src/Memory3D.tsx) pour ajouter ou renommer vos souvenirs.
 
-| Mémoire | Thème |
-|---------|-------|
-| **Mémoire 1** | Enfance |
-| **Mémoire 2** | Été Sans Fin |
-| **Mémoire 3** | Famille |
-| **Mémoire 4** | Premières Fois |
-| **Mémoire 5** | Amitié D'Avant |
-| **Mémoire 6** | Insouciance |
-| **Mémoire 7** | Lumière Dorée |
-| **Mémoire 8** | Campagne |
-| **Mémoire 9** | Souvenirs De Campagne |
-| **Mémoire 10** | Vacances En Mer |
-| **Mémoire 11** | Douceur Perdue |
-| **Mémoire 12** | Retour Aux Sources |
-| **Mémoire 13** | Jeux D'Autrefois |
-| **Mémoire 14** | Instant Suspendu |
-| **Mémoire 15** | Bonheur Simple |
-| **Mémoire 16** | Coucher De Soleil |
-| **Mémoire 17** | Tendresse |
-| **Mémoire 18** | Temps Qui Passe |
-| **Mémoire 19** | Lenteur Heureuse |
-| **Mémoire 20** | Souvenirs D'Été |
-
-*(Les thèmes se répètent en cycle au-delà de 20 images)*
+### Exemple:
+```typescript
+const [memories, setMemories] = useState<Memory[]>([
+  { id: 1, image: '/memories/memory-1.jpg', title: 'Vacances à Paris' },
+  { id: 2, image: '/memories/memory-2.jpg', title: 'Pique-nique' },
+  { id: 3, image: '/memories/memory-3.jpg', title: 'Coucher de soleil' },
+])
+```
 
 ## Navigation
 
