@@ -154,7 +154,11 @@ function App() {
 
       {experience === 'balades' && (
         <Suspense fallback={null}>
-          <AnciennesBalades onBack={handleNavBack} />
+          <AnciennesBalades
+            onBack={handleNavBack}
+            onOpenGallery={handleCreateWalk}
+            onLaunchExperience={() => navigateTo('modelviewer')}
+          />
         </Suspense>
       )}
 

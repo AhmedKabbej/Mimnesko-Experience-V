@@ -7,6 +7,8 @@ import './AnciennesBalades.css'
 
 interface AnciennesBaladeProps {
   onBack: () => void
+  onOpenGallery: () => void
+  onLaunchExperience: () => void
 }
 
 type FilterId = 'toutes' | 'recentes' | 'partagees' | 'favoris' | 'hors-ligne'
@@ -50,7 +52,7 @@ const buildList = (): ListItem[] => [
   { type: 'balade', id: 6, title: 'Canal Saint-Martin',        location: 'Paris',                   date: '3 avr 2026',   duration: '1h40',   souvenirs: 6, tag: 'Immersive', starred: false, synced: true      },
 ]
 
-export default function AnciennesBalades({ onBack }: AnciennesBaladeProps) {
+export default function AnciennesBalades({ onBack, onOpenGallery, onLaunchExperience }: AnciennesBaladeProps) {
   const [activeFilter, setActiveFilter] = useState<FilterId>('toutes')
   const [query, setQuery]               = useState('')
   const [searchFocused, setSearchFocused] = useState(false)
@@ -60,6 +62,11 @@ export default function AnciennesBalades({ onBack }: AnciennesBaladeProps) {
   const screenRef = useRef<HTMLDivElement>(null)
 
   const allItems = buildList()
+  const baladeItems = allItems.filter(i => i.type === 'balade')
+
+  const [selectedId, setSelectedId] = useState<string | number>(baladeItems[0]?.id ?? 1)
+  const [isPlaying, setIsPlaying]   = useState(false)
+  const selected = baladeItems.find(b => b.id === selectedId) ?? baladeItems[0]
 
   const visibleItems = allItems.filter(item => {
     if (item.type === 'shared' && activeFilter === 'hors-ligne') return false
@@ -188,7 +195,7 @@ export default function AnciennesBalades({ onBack }: AnciennesBaladeProps) {
             )
 
             if (item.type === 'link') return (
-              <button key="link" className="ab-item ab-item--link">
+              <button key="link" className="ab-item ab-item--link" onClick={onOpenGallery}>
                 <span>Voir mes balades Mimnesko</span>
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                   <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -198,8 +205,15 @@ export default function AnciennesBalades({ onBack }: AnciennesBaladeProps) {
 
             // type === 'balade'
             const isStarred = starred.has(item.id)
+            const isSelected = item.id === selectedId
             return (
-              <div key={item.id} className="ab-item ab-item--balade" onMouseEnter={handleItemEnter} onMouseLeave={handleItemLeave}>
+              <div
+                key={item.id}
+                className={`ab-item ab-item--balade${isSelected ? ' ab-item--selected' : ''}`}
+                onMouseEnter={handleItemEnter}
+                onMouseLeave={handleItemLeave}
+                onClick={() => { setSelectedId(item.id); setIsPlaying(false) }}
+              >
                 <div className="ab-item-body">
                   <div className="ab-item-row1">
                     <span className="ab-item-title">{item.title}</span>
@@ -243,8 +257,74 @@ export default function AnciennesBalades({ onBack }: AnciennesBaladeProps) {
 
       {/* Sticky CTA */}
       <div className="ab-cta-wrap">
-        <button className="ab-cta-btn">Voir mes balades Mimnesko →</button>
+        <button className="ab-cta-btn" onClick={onOpenGallery}>Voir mes balades Mimnesko →</button>
       </div>
+
+      {/* ── Experience viewer (PC only) ── */}
+      <aside className="ab-viewer">
+        <div className="ab-viewer-label">Aperçu de l'expérience</div>
+
+        <div className={`ab-viewer-stage${isPlaying ? ' ab-viewer-stage--playing' : ''}`}>
+          {/* immersive scene */}
+          <div className="ab-viewer-scene">
+            <span className="ab-viewer-scene-tag">{selected?.tag}</span>
+            <div className="ab-viewer-glow" />
+            {/* grid floor suggestion */}
+            <div className="ab-viewer-floor" />
+
+            {/* centered play */}
+            <button
+              className="ab-viewer-play"
+              onClick={() => setIsPlaying(p => !p)}
+              aria-label={isPlaying ? 'Pause' : 'Lecture'}
+            >
+              {isPlaying ? (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="6" y="5" width="4" height="14" rx="1.5"/>
+                  <rect x="14" y="5" width="4" height="14" rx="1.5"/>
+                </svg>
+              ) : (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5z"/>
+                </svg>
+              )}
+            </button>
+          </div>
+
+          {/* timeline controls */}
+          <div className="ab-viewer-controls">
+            <span className="ab-viewer-time">0:00</span>
+            <div className="ab-viewer-timeline">
+              <div className={`ab-viewer-progress${isPlaying ? ' ab-viewer-progress--run' : ''}`} />
+            </div>
+            <span className="ab-viewer-time">{selected?.duration}</span>
+          </div>
+        </div>
+
+        {/* info */}
+        <div className="ab-viewer-info">
+          <div className="ab-viewer-info-head">
+            <h3 className="ab-viewer-title">{selected?.title}</h3>
+            <span className="ab-viewer-badge">{selected?.tag}</span>
+          </div>
+          <div className="ab-viewer-meta">
+            <span><IconMapPin size={12} />{selected?.location}</span>
+            <span><IconCalendar size={12} />{selected?.date}</span>
+            <span><IconClock size={12} />{selected?.duration}</span>
+          </div>
+          <div className="ab-viewer-stats">
+            <div className="ab-viewer-stat">
+              <span className="ab-viewer-stat-val">{selected?.souvenirs}</span>
+              <span className="ab-viewer-stat-label">Souvenirs</span>
+            </div>
+            <div className="ab-viewer-stat">
+              <span className="ab-viewer-stat-val">{selected?.synced === 'offline' ? 'Local' : 'Sync'}</span>
+              <span className="ab-viewer-stat-label">Stockage</span>
+            </div>
+          </div>
+          <button className="ab-viewer-launch" onClick={onLaunchExperience}>Lancer l'expérience →</button>
+        </div>
+      </aside>
 
     </div>
   )

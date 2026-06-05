@@ -372,3 +372,284 @@
   .ab-list    { padding-left: 80px; padding-right: 80px; }
   .ab-cta-wrap { padding-left: 80px; padding-right: 80px; }
 }
+
+/* ==================== EXPERIENCE VIEWER ==================== */
+
+/* Hidden on mobile/tablet */
+.ab-viewer { display: none; }
+
+/* Selected balade highlight */
+.ab-item--selected {
+  border-color: var(--color-orange) !important;
+  box-shadow: 0 4px 18px rgba(255,106,0,0.18) !important;
+}
+
+@media (min-width: 1200px) {
+  .ab-viewer {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: absolute;
+    /* fills the whole empty area right of the 720px list */
+    left: 744px;
+    right: 40px;
+    top: 112px;
+    bottom: 92px; /* clears the centered radial menu dot */
+  }
+
+  .ab-viewer-label {
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-orange);
+  }
+
+  /* Stage — fills all available vertical space */
+  .ab-viewer-stage {
+    flex: 1;
+    min-height: 0;
+    background: #1C2833;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ab-viewer-scene {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255,138,60,0.22) 0%, transparent 55%),
+      linear-gradient(180deg, #232f3b 0%, #161f29 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .ab-viewer-scene-tag {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    z-index: 3;
+  }
+
+  .ab-viewer-glow {
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,106,0,0.4) 0%, transparent 68%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: ab-glow-breathe 4s ease-in-out infinite;
+  }
+
+  @keyframes ab-glow-breathe {
+    0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+    50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  .ab-viewer-floor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 90px;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(255,138,60,0.06) 100%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 40px);
+    transform: perspective(220px) rotateX(58deg);
+    transform-origin: bottom;
+    opacity: 0.6;
+  }
+
+  /* Centered play button */
+  .ab-viewer-play {
+    position: relative;
+    z-index: 4;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: var(--gradient-orange-btn);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 28px rgba(255,106,0,0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .ab-viewer-play:hover {
+    transform: scale(1.08);
+    box-shadow: 0 10px 32px rgba(255,106,0,0.65);
+  }
+
+  .ab-viewer-play svg { width: 28px; height: 28px; margin-left: 2px; }
+
+  /* Controls */
+  .ab-viewer-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .ab-viewer-time {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  .ab-viewer-timeline {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.14);
+    overflow: hidden;
+  }
+
+  .ab-viewer-progress {
+    width: 0%;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--gradient-orange-btn);
+  }
+
+  .ab-viewer-progress--run {
+    animation: ab-progress-run 6s linear forwards;
+  }
+
+  @keyframes ab-progress-run {
+    from { width: 0%; }
+    to   { width: 100%; }
+  }
+
+  /* Info card */
+  .ab-viewer-info {
+    background: var(--color-white);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 18px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .ab-viewer-info-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .ab-viewer-title {
+    font-size: 20px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-content-primary);
+    letter-spacing: -0.3px;
+  }
+
+  .ab-viewer-badge {
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    background: var(--color-orange-pale);
+    color: #B5500A;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+  }
+
+  .ab-viewer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .ab-viewer-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: var(--color-content-secondary);
+  }
+
+  .ab-viewer-stats {
+    display: flex;
+    gap: 10px;
+  }
+
+  .ab-viewer-stat {
+    flex: 1;
+    background: var(--color-bg-secondary);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ab-viewer-stat-val {
+    font-size: 18px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-orange);
+  }
+
+  .ab-viewer-stat-label {
+    font-size: 11px;
+    color: var(--color-content-secondary);
+  }
+
+  .ab-viewer-launch {
+    margin-top: 2px;
+    padding: 14px;
+    background: var(--gradient-orange-btn);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-family);
+    font-size: 15px;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    box-shadow: var(--shadow-orange);
+    transition: all var(--transition-base);
+  }
+
+  .ab-viewer-launch:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(255,106,0,0.4);
+    filter: brightness(1.05);
+  }
+}
+
+@media (min-width: 1440px) {
+  .ab-viewer {
+    left: 820px;
+    right: 64px;
+    top: 116px;
+    bottom: 96px;
+  }
+}
+
+@media (min-width: 1700px) {
+  .ab-viewer {
+    left: 860px;
+    right: 96px;
+  }
+}

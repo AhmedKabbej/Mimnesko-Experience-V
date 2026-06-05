@@ -19,6 +19,7 @@ export default function LoadingTransition({ onMidpoint, onComplete, circleColor 
   const wrapperRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const textRef = useRef<HTMLParagraphElement>(null)
+  const progressRef = useRef<HTMLDivElement>(null)
   const onMidpointRef = useRef(onMidpoint)
   const onCompleteRef = useRef(onComplete)
 
@@ -29,7 +30,8 @@ export default function LoadingTransition({ onMidpoint, onComplete, circleColor 
     const canvas = canvasRef.current
     const wrapper = wrapperRef.current
     const text = textRef.current
-    if (!canvas || !wrapper || !text) return
+    const progress = progressRef.current
+    if (!canvas || !wrapper || !text || !progress) return
 
     const W = window.innerWidth
     const H = window.innerHeight
@@ -85,6 +87,11 @@ export default function LoadingTransition({ onMidpoint, onComplete, circleColor 
           ctx.fill()
         })
 
+        // Barre de progression : suit le remplissage des cercles, fade-in vers la fin
+        progress.style.transition = 'opacity 0.3s ease'
+        progress.style.opacity = String(Math.max(0, (p - 0.5) / 0.28)) // visible de p=0.5 → 0.78
+        progress.style.width = `${Math.min(p / 0.78, 1) * 100}%`        // 100% pile quand Mimnesko apparaît
+
         // Texte apparaît quand l'écran est presque couvert
         if (p > 0.78 && !textShown) {
           textShown = true
@@ -97,6 +104,9 @@ export default function LoadingTransition({ onMidpoint, onComplete, circleColor 
         // Écran totalement couvert
         ctx.fillStyle = circleColor
         ctx.fillRect(0, 0, W, H)
+
+        progress.style.opacity = '1'
+        progress.style.width = '100%'
 
         if (!textShown) {
           textShown = true
@@ -157,6 +167,32 @@ export default function LoadingTransition({ onMidpoint, onComplete, circleColor 
       >
         Mimnesko
       </p>
+      {/* fine progress bar under the title */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 'calc(50% + 24px)',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '120px',
+          height: '2px',
+          borderRadius: '2px',
+          background: 'rgba(128, 128, 128, 0.25)',
+          overflow: 'hidden',
+          zIndex: 1,
+        }}
+      >
+        <div
+          ref={progressRef}
+          style={{
+            width: '0%',
+            height: '100%',
+            opacity: 0,
+            borderRadius: '2px',
+            background: textColor,
+          }}
+        />
+      </div>
     </div>
   )
 }

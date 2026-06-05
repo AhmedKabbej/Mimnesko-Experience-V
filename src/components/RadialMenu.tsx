@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import gsap from 'gsap'
 import { IconHome, IconPhoto, IconRoute, IconGear } from './icons'
 import './RadialMenu.css'
@@ -13,15 +13,24 @@ interface MenuItem {
   y: number
 }
 
-// 4 items evenly spread in a 150° arc (165°→15°), R = 90px
-const R = 90
-const ANGLES = [165, 115, 65, 15]
-const ITEMS: MenuItem[] = [
-  { id: 'intro',     label: 'Accueil',    Icon: IconHome,  x: Math.cos((ANGLES[0] * Math.PI) / 180) * R, y: -Math.sin((ANGLES[0] * Math.PI) / 180) * R },
-  { id: 'souvenirs', label: 'Souvenirs',  Icon: IconPhoto, x: Math.cos((ANGLES[1] * Math.PI) / 180) * R, y: -Math.sin((ANGLES[1] * Math.PI) / 180) * R },
-  { id: 'balades',   label: 'Balades',    Icon: IconRoute, x: Math.cos((ANGLES[2] * Math.PI) / 180) * R, y: -Math.sin((ANGLES[2] * Math.PI) / 180) * R },
-  { id: 'settings',  label: 'Paramètres', Icon: IconGear,  x: Math.cos((ANGLES[3] * Math.PI) / 180) * R, y: -Math.sin((ANGLES[3] * Math.PI) / 180) * R },
+const BASE = [
+  { id: 'intro'     as NavScreen, label: 'Accueil',    Icon: IconHome },
+  { id: 'souvenirs' as NavScreen, label: 'Souvenirs',  Icon: IconPhoto },
+  { id: 'balades'   as NavScreen, label: 'Balades',    Icon: IconRoute },
+  { id: 'settings'  as NavScreen, label: 'Paramètres', Icon: IconGear },
 ]
+
+// Desktop: centered bottom, 150° fan (165°→15°)
+// Mobile: bottom-right corner, quarter fan up-left (180°→90°) so nothing clips off-screen
+function buildItems(isMobile: boolean): MenuItem[] {
+  const angles = isMobile ? [180, 150, 120, 90] : [165, 115, 65, 15]
+  const R = isMobile ? 82 : 90
+  return BASE.map((b, i) => ({
+    ...b,
+    x: Math.cos((angles[i] * Math.PI) / 180) * R,
+    y: -Math.sin((angles[i] * Math.PI) / 180) * R,
+  }))
+}
 
 interface RadialMenuProps {
   active: NavScreen
@@ -29,11 +38,20 @@ interface RadialMenuProps {
 }
 
 export default function RadialMenu({ active, onNavigate }: RadialMenuProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen]   = useState(false)
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 900)
   const busy      = useRef(false)
   const dotRef    = useRef<HTMLButtonElement>(null)
   const itemRefs  = useRef<(HTMLButtonElement | null)[]>([])
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([])
+
+  const ITEMS = useMemo(() => buildItems(isMobile), [isMobile])
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 900)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   useEffect(() => {
     itemRefs.current.forEach(el => {
@@ -65,7 +83,7 @@ export default function RadialMenu({ active, onNavigate }: RadialMenuProps) {
       )
       if (lbl) gsap.to(lbl, { opacity: 1, y: 0, duration: 0.22, delay: 0.26 + i * 0.06 })
     })
-  }, [])
+  }, [ITEMS])
 
   const close = useCallback((cb?: () => void) => {
     if (busy.current) return
@@ -91,7 +109,7 @@ export default function RadialMenu({ active, onNavigate }: RadialMenuProps) {
       })
     })
     gsap.to(dotRef.current, { scale: 1, duration: 0.18, ease: 'power2.out' })
-  }, [])
+  }, [ITEMS])
 
   const toggle = () => isOpen ? close() : open()
 
