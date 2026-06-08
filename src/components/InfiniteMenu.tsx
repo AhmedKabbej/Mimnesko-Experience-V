@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useEffect, useRef, useState } from 'react';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
+import { playAmbient } from '../utils/ambientAudio';
 import './InfiniteMenu.css';
 
 const discVertShaderSource = `#version 300 es
@@ -952,9 +953,7 @@ export default function InfiniteMenu({ items = [], scale = 1.0, onActionClick }:
 
   const handleButtonClick = () => {
     if (!activeItem) return;
-    const snd = new Audio('/mp3/aWarmAscent.mp3');
-    snd.currentTime = 0;
-    snd.play().catch(() => {});
+    playAmbient('/mp3/aWarmAscent.mp3');
     if (onActionClick) {
       onActionClick(activeItem);
     } else if (activeItem.link?.startsWith('http')) {
