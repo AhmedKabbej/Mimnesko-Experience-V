@@ -1,7 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { IconArrowLeft, IconCloud, IconSearch, IconStar, IconPlus } from '../components/icons'
+import Folder from '../components/Folder'
 import './MesSouvenirsScreen.css'
+
+interface UploadedPhoto {
+  id: string
+  name: string
+  url: string
+}
 
 interface MesSouvenirsScreenProps {
   onBack: () => void
@@ -32,7 +39,11 @@ export default function MesSouvenirsScreen({ onBack }: MesSouvenirsScreenProps) 
   const [starred, setStarred]           = useState<Set<number>>(
     new Set(SOUVENIRS.filter(s => s.starred).map(s => s.id))
   )
+  const [modalOpen, setModalOpen]       = useState(false)
+  const [isDragging, setIsDragging]     = useState(false)
+  const [photos, setPhotos]             = useState<UploadedPhoto[]>([])
   const screenRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const displayed = SOUVENIRS.filter(s => {
     if (activeFilter === 'favoris' && !starred.has(s.id)) return false
@@ -47,6 +58,51 @@ export default function MesSouvenirsScreen({ onBack }: MesSouvenirsScreenProps) 
       return next
     })
   }
+
+  // ── Upload / drag & drop (max 3 photos) ──
+  const MAX_PHOTOS = 3
+  const addFiles = (fileList: FileList | null) => {
+    if (!fileList) return
+    const images = Array.from(fileList).filter(f => f.type.startsWith('image/'))
+    if (!images.length) return
+    setPhotos(prev => {
+      const room = MAX_PHOTOS - prev.length
+      if (room <= 0) return prev
+      const next = images.slice(0, room).map(f => ({
+        id: `${f.name}-${f.size}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        name: f.name,
+        url: URL.createObjectURL(f),
+      }))
+      return [...prev, ...next]
+    })
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    addFiles(e.dataTransfer.files)
+  }
+
+  const removePhoto = (id: string) => {
+    setPhotos(prev => {
+      const target = prev.find(p => p.id === id)
+      if (target) URL.revokeObjectURL(target.url)
+      return prev.filter(p => p.id !== id)
+    })
+  }
+
+  const closeModal = () => {
+    setIsDragging(false)
+    setModalOpen(false)
+  }
+
+  // Revoke object URLs on unmount to avoid memory leaks
+  useEffect(() => {
+    return () => {
+      photos.forEach(p => URL.revokeObjectURL(p.url))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // ── Entrance animation ──
   useEffect(() => {
@@ -234,11 +290,98 @@ export default function MesSouvenirsScreen({ onBack }: MesSouvenirsScreenProps) 
 
       {/* Add button */}
       <div className="ms-add-wrap">
-        <button className="ms-add-btn">
+        <button className="ms-add-btn" onClick={() => setModalOpen(true)}>
           <IconPlus size={18} />
           Ajouter un souvenir
         </button>
       </div>
+
+      {/* Add memory modal */}
+      {modalOpen && (
+        <div className="ms-modal-overlay" onClick={closeModal}>
+          <div
+            className="ms-modal"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Ajouter un souvenir"
+          >
+            <button className="ms-modal-close" onClick={closeModal} aria-label="Fermer">
+              <span className="ms-modal-close-icon" />
+            </button>
+
+            <h2 className="ms-modal-title">Ajouter un souvenir</h2>
+
+            {/* Drag & drop zone */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              hidden
+              onChange={e => addFiles(e.target.files)}
+            />
+            <div
+              className={`ms-dropzone${isDragging ? ' ms-dropzone--active' : ''}${photos.length >= MAX_PHOTOS ? ' ms-dropzone--full' : ''}`}
+              onClick={() => { if (photos.length < MAX_PHOTOS) fileInputRef.current?.click() }}
+              onDragOver={e => { e.preventDefault(); if (photos.length < MAX_PHOTOS) setIsDragging(true) }}
+              onDragLeave={e => { e.preventDefault(); setIsDragging(false) }}
+              onDrop={e => { if (photos.length < MAX_PHOTOS) handleDrop(e); else { e.preventDefault(); setIsDragging(false) } }}
+            >
+              <div className="ms-dropzone-icon">
+                <IconPlus size={26} />
+              </div>
+              {photos.length >= MAX_PHOTOS ? (
+                <p className="ms-dropzone-text">Limite de {MAX_PHOTOS} photos atteinte</p>
+              ) : (
+                <>
+                  <p className="ms-dropzone-text">Drag &amp; droppez vos photos</p>
+                  <p className="ms-dropzone-hint">ou cliquez pour parcourir &middot; {photos.length}/{MAX_PHOTOS}</p>
+                </>
+              )}
+            </div>
+
+            {photos.length > 0 && (
+              <div className="ms-thumbs">
+                {photos.map(p => (
+                  <div key={p.id} className="ms-thumb">
+                    <img src={p.url} alt={p.name} />
+                    <button
+                      className="ms-thumb-remove"
+                      onClick={() => removePhoto(p.id)}
+                      aria-label={`Retirer ${p.name}`}
+                    >×</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Folder preview (React Bits) */}
+            <div className="ms-folder-wrap">
+              <Folder
+                size={1.4}
+                color="#FF6A00"
+                items={photos.slice(0, 3).map(p => (
+                  <img
+                    key={p.id}
+                    src={p.url}
+                    alt={p.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 10 }}
+                  />
+                ))}
+              />
+            </div>
+
+            <button
+              className="ms-modal-submit"
+              disabled={photos.length === 0}
+              onClick={closeModal}
+            >
+              Enregistrer le souvenir
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   )
