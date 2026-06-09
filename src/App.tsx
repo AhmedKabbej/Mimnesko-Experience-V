@@ -70,6 +70,10 @@ function App() {
     setIsNavTransition(true)
   }
 
+  const handleStartJourney = () => {
+    navigateTo('modelviewer')
+  }
+
   const handleNavBack = () => {
     navigateTo('intro')
   }
@@ -169,6 +173,7 @@ function App() {
             visible={!showIntro}
             onCreateWalk={handleCreateWalk}
             onSettings={handleOpenSettings}
+            onStartJourney={handleStartJourney}
           />
         </>
       )}

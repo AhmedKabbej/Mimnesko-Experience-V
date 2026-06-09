@@ -1,0 +1,127 @@
+.msearch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;                  /* l'espacement des filtres est géré par leur wrapper */
+  user-select: none;
+}
+
+/* ── Barre (verre dépoli façon macOS) ──────────────────── */
+.msearch-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 12px;
+  width: 58px;            /* fermé = cercle ; animé par GSAP */
+  height: 58px;
+  border-radius: 9999px;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 10px 30px rgba(255, 106, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Remplissage orange visible quand la barre est fermée. */
+.msearch-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 9999px;
+  background: linear-gradient(145deg, #FF8630 0%, #FF6A00 100%);
+}
+
+.msearch-icon-btn {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.msearch-icon {
+  display: grid;
+  place-items: center;
+  color: #ffffff;          /* recoloré en orange à l'ouverture */
+}
+
+.msearch-icon svg { width: 22px; height: 22px; }
+
+.msearch-input {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  opacity: 0;              /* visible une fois ouvert */
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--color-content-primary, #1C2833);
+  font-family: var(--font-family, inherit);
+  font-size: 15px;
+  font-weight: var(--font-weight-medium, 500);
+  letter-spacing: 0.01em;
+}
+
+.msearch-input::placeholder { color: rgba(28, 40, 51, 0.45); }
+
+/* Champ non interactif tant que la barre est fermée. */
+.msearch:not(.is-open) .msearch-input { pointer-events: none; }
+
+/* ── Filtres nostalgiques (collapsent quand fermé) ─────── */
+.msearch-dates-wrap {
+  height: 0;
+  overflow: hidden;
+}
+
+.msearch-dates {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 340px;
+  padding-top: 16px;       /* l'espace bar↔filtres, qui collapse aussi */
+}
+
+.msearch-date-chip {
+  opacity: 0;              /* révélé à l'ouverture */
+  padding: 9px 16px;
+  border: 1px solid var(--color-orange-pale, #FBCEAD);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.75);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--color-orange, #FF6A00);
+  font-family: var(--font-family, inherit);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold, 600);
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(255, 106, 0, 0.10);
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.msearch-date-chip:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(145deg, #FF8630 0%, #FF6A00 100%);
+  color: #ffffff;
+}
+
+/* Bouton de lancement (réutilise .primary-button, juste l'espacement). */
+.msearch-start {
+  margin-top: 18px;
+}
+
+@media (max-width: 480px) {
+  .msearch-dates { max-width: 300px; }
+}

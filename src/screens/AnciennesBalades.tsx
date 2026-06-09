@@ -257,7 +257,7 @@ export default function AnciennesBalades({ onBack, onOpenGallery, onLaunchExperi
 
       {/* Sticky CTA */}
       <div className="ab-cta-wrap">
-        <button className="ab-cta-btn" onClick={onOpenGallery}>Voir mes balades Mimnesko →</button>
+        <button className="ab-cta-btn" onClick={onOpenGallery}>Voir mes balades Mimnesko 3D →</button>
       </div>
 
       {/* ── Experience viewer (PC only) ── */}

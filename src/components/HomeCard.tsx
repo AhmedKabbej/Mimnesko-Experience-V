@@ -1,21 +1,15 @@
-import gsap from 'gsap'
 import { useTextSplitAnimation } from '../hooks/useTextSplitAnimation'
+import GooeySearchBar from './GooeySearchBar'
 
 interface HomeCardProps {
   visible: boolean
   onCreateWalk: () => void
   onSettings: () => void
+  onStartJourney: () => void
 }
 
-export default function HomeCard({ visible, onCreateWalk }: HomeCardProps) {
-  const { subtitleRef, titleRef, buttonRef } = useTextSplitAnimation(visible)
-
-  const handleClick = () => {
-    gsap.timeline()
-      .to(buttonRef.current, { scale: 0.95, duration: 0.1 })
-      .to(buttonRef.current, { scale: 1, duration: 0.1 }, 0.1)
-    onCreateWalk()
-  }
+export default function HomeCard({ visible, onStartJourney }: HomeCardProps) {
+  const { subtitleRef, titleRef } = useTextSplitAnimation(visible)
 
   return (
     <div
@@ -28,18 +22,15 @@ export default function HomeCard({ visible, onCreateWalk }: HomeCardProps) {
             <p className="subtitle" ref={subtitleRef}>
               C'est ici que tout commence.
             </p>
+          </div>
+
+          <GooeySearchBar onStart={onStartJourney} />
+
+          <div className="text-section">
             <p className="title" ref={titleRef}>
               Marche, ressens, capture… et laisse tes souvenirs prendre vie.
             </p>
           </div>
-          <button
-            className="primary-button"
-            ref={buttonRef}
-            onClick={handleClick}
-            style={visible ? undefined : { opacity: 0, pointerEvents: 'none' }}
-          >
-            Créer une balade Mimnesko
-          </button>
         </div>
       </div>
     </div>
