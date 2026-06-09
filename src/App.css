@@ -10,8 +10,51 @@
   overflow: hidden;
 }
 
+/* ==================== PLASMA BACKGROUND ==================== */
+/* Calque noir garanti derrière le plasma (recouvre le dégradé clair). */
+.app-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #000;
+  opacity: 0;
+  transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.app-container.is-searching::before {
+  opacity: 1;
+}
+
+.home-plasma {
+  position: absolute;
+  inset: 0;
+  z-index: 0;            /* au-dessus du calque noir, le plasma se compose dessus */
+  opacity: 0;
+  /* belle transition fluide à l'apparition / disparition */
+  transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.home-plasma.is-on {
+  opacity: 1;
+}
+
+/* Texte lisible sur le fond noir pendant la recherche. */
+.app-container .subtitle,
+.app-container .title {
+  transition: color 0.7s ease;
+}
+
+.app-container.is-searching .title {
+  color: rgba(255, 255, 255, 0.92);
+}
+
 /* ==================== CONTENT WRAPPER ==================== */
 .content-wrapper {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;

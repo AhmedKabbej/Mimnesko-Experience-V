@@ -10,15 +10,19 @@ const FILTERS = ['Il y a 3 mois', 'Il y a 1 an', 'Il y a 5 ans', 'Il y a 10 ans'
 interface GooeySearchBarProps {
   onSelectFilter?: (label: string) => void
   onStart?: (query: string) => void
+  onOpenChange?: (open: boolean) => void
 }
 
-export default function GooeySearchBar({ onSelectFilter, onStart }: GooeySearchBarProps) {
+export default function GooeySearchBar({ onSelectFilter, onStart, onOpenChange }: GooeySearchBarProps) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
   const didMount = useRef(false)
   const startRef = useRef<HTMLButtonElement>(null)
 
   const showStart = open && value.trim().length > 0
+
+  // Notifie le parent (pour basculer le fond plasma).
+  useEffect(() => { onOpenChange?.(open) }, [open, onOpenChange])
 
   const rootRef = useRef<HTMLDivElement>(null)
   const barRef = useRef<HTMLDivElement>(null)

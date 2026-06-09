@@ -2,6 +2,26 @@
 
 ---
 
+## Navigation — Chemins d'URL des pages
+
+Chaque écran a son URL : on peut y accéder **directement** (deep-link) sans refaire onboarding → intro → parcours. L'URL se met à jour en naviguant, et les boutons précédent/suivant du navigateur fonctionnent.
+
+| URL | Page | Composant |
+|-----|------|-----------|
+| `/` | Accueil (recherche, plasma) | `HomeCard` |
+| `/galerie` | Galerie 3D des souvenirs | `Memory3D` |
+| `/experience` | Expérience 3D (scène `scene1.glb`) | `ModelViewerScreen` |
+| `/souvenirs` | Mes souvenirs | `MesSouvenirsScreen` |
+| `/balades` | Anciennes balades | `AnciennesBalades` |
+| `/parametres` | Réglages | `SettingsScreen` |
+
+**Notes :**
+- L'onboarding ne s'affiche **qu'une fois** (mémorisé dans `localStorage` → clé `mimnesko_onboarded`). Pour le revoir : `localStorage.removeItem('mimnesko_onboarded')` en console.
+- Retour depuis `/experience` : revient à la page d'origine du lancement (`/`, `/galerie` ou `/balades`).
+- En **production (Vercel)**, `vercel.json` réécrit toutes les routes vers `index.html` pour que recharger une URL profonde (ex. `/souvenirs`) fonctionne.
+
+---
+
 ## Navigation Scroll 3D — Notes Blender / Three.js
 
 ### 1. Optimisation des modèles 3D

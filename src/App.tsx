@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import OnboardingScreen from './screens/OnboardingScreen'
 import Intro from './screens/Intro'
 import HomeCard from './components/HomeCard'
@@ -17,10 +17,31 @@ const AnciennesBalades  = lazy(() => import('./screens/AnciennesBalades'))
 type ExperienceType = 'intro' | 'gallery' | 'modelviewer' | 'settings' | 'souvenirs' | 'balades'
 const NAV_SCREENS: ExperienceType[] = ['intro', 'souvenirs', 'balades', 'settings']
 
+// ── Routing : un chemin d'URL par page ──
+const PATHS: Record<ExperienceType, string> = {
+  intro: '/',
+  gallery: '/galerie',
+  modelviewer: '/experience',
+  settings: '/parametres',
+  souvenirs: '/souvenirs',
+  balades: '/balades',
+}
+const EXP_BY_PATH: Record<string, ExperienceType> = Object.fromEntries(
+  Object.entries(PATHS).map(([exp, path]) => [path, exp as ExperienceType])
+)
+const experienceFromPath = (): ExperienceType | null =>
+  EXP_BY_PATH[window.location.pathname] ?? null
+
 function App() {
-  const [showOnboarding, setShowOnboarding] = useState(true)
-  const [showIntro, setShowIntro]       = useState(true)
-  const [experience, setExperience]     = useState<ExperienceType>('intro')
+  // ── Deep-linking : on démarre directement sur la page de l'URL ──
+  const initialExp = experienceFromPath()
+  const deepLinked = initialExp != null && initialExp !== 'intro'
+  const onboarded = typeof localStorage !== 'undefined' && localStorage.getItem('mimnesko_onboarded') === '1'
+  const skipFlow = deepLinked || onboarded
+
+  const [showOnboarding, setShowOnboarding] = useState(deepLinked ? false : !onboarded)
+  const [showIntro, setShowIntro]       = useState(skipFlow ? false : true)
+  const [experience, setExperience]     = useState<ExperienceType>(initialExp ?? 'intro')
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [isReturning, setIsReturning]   = useState(false)
 
@@ -28,7 +49,35 @@ function App() {
   const [pendingNav, setPendingNav]     = useState<ExperienceType | null>(null)
   const [isNavTransition, setIsNavTransition] = useState(false)
 
+  // D'où l'expérience 3D a été lancée (pour y revenir au retour).
+  const [modelOrigin, setModelOrigin]   = useState<ExperienceType>('intro')
+
   const { play: playAudio, stop: stopAudio, playRetour } = useSelectionAudio()
+
+  // ── L'URL reflète la page courante (refresh = on reste au même endroit) ──
+  useEffect(() => {
+    if (showOnboarding) return
+    const path = PATHS[experience]
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, '', path)
+    }
+  }, [experience, showOnboarding])
+
+  // ── Boutons précédent/suivant du navigateur ──
+  useEffect(() => {
+    const onPop = () => {
+      const exp = experienceFromPath() ?? 'intro'
+      setShowOnboarding(false)
+      setShowIntro(false)
+      setPendingNav(null)
+      setIsNavTransition(false)
+      setIsTransitioning(false)
+      setIsReturning(false)
+      setExperience(exp)
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
 
   /* ── Gallery flow ── */
   const handleCreateWalk = () => {
@@ -44,12 +93,13 @@ function App() {
 
   const handleOpenModel = () => {
     stopAudio()
+    setModelOrigin('gallery')
     setExperience('modelviewer')
   }
 
   const handleBackFromModel = () => {
     playRetour()
-    setExperience('gallery')
+    setExperience(modelOrigin)
   }
 
   /* ── Settings ── */
@@ -71,6 +121,7 @@ function App() {
   }
 
   const handleStartJourney = () => {
+    setModelOrigin('intro')
     navigateTo('modelviewer')
   }
 
@@ -94,7 +145,7 @@ function App() {
 
   // Render ONLY the onboarding — nothing else mounts behind it
   if (showOnboarding) {
-    return <OnboardingScreen onComplete={() => { setShowOnboarding(false); setShowIntro(false) }} />
+    return <OnboardingScreen onComplete={() => { localStorage.setItem('mimnesko_onboarded', '1'); setShowOnboarding(false); setShowIntro(false) }} />
   }
 
   return (
@@ -161,7 +212,7 @@ function App() {
           <AnciennesBalades
             onBack={handleNavBack}
             onOpenGallery={handleCreateWalk}
-            onLaunchExperience={() => navigateTo('modelviewer')}
+            onLaunchExperience={() => { setModelOrigin('balades'); navigateTo('modelviewer') }}
           />
         </Suspense>
       )}
