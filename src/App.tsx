@@ -36,10 +36,10 @@ function App() {
   // ── Deep-linking : on démarre directement sur la page de l'URL ──
   const initialExp = experienceFromPath()
   const deepLinked = initialExp != null && initialExp !== 'intro'
-  const onboarded = typeof localStorage !== 'undefined' && localStorage.getItem('mimnesko_onboarded') === '1'
-  const skipFlow = deepLinked || onboarded
+  // L'onboarding s'affiche à chaque lancement (sauf deep-link direct vers une page).
+  const skipFlow = deepLinked
 
-  const [showOnboarding, setShowOnboarding] = useState(deepLinked ? false : !onboarded)
+  const [showOnboarding, setShowOnboarding] = useState(!deepLinked)
   const [showIntro, setShowIntro]       = useState(skipFlow ? false : true)
   const [experience, setExperience]     = useState<ExperienceType>(initialExp ?? 'intro')
   const [isTransitioning, setIsTransitioning] = useState(false)
