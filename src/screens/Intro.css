@@ -30,12 +30,12 @@
 /* ==================== INTRO LOGO ==================== */
 .intro-logo {
   font-size: 48px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
   letter-spacing: 2px;
   color: var(--color-dark);
   opacity: 0;
   transform: scale(0.8);
-  font-family: var(--font-family);
+  font-family: var(--font-title);
 }
 
 /* ==================== PROGRESS BAR ==================== */

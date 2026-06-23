@@ -16,6 +16,26 @@ const CURVE = new THREE.CatmullRomCurve3(
 const NUM_CHECKPOINTS = pathData.points.length
 const UP = new THREE.Vector3(0, 1, 0)
 
+// Joli stylo-plume pour éditer le texte.
+function PenIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M3 21l1.1-4 11.2-11.2a2.05 2.05 0 0 1 2.9 0l.9.9a2.05 2.05 0 0 1 0 2.9L7.9 20 3 21z"
+        fill="currentColor"
+      />
+      <path
+        d="M14.3 6.7l3 3"
+        stroke="rgba(15,10,5,0.45)" strokeWidth="1.1" strokeLinecap="round"
+      />
+      <path
+        d="M3 21l1.1-4 2.9 2.9L3 21z"
+        fill="rgba(15,10,5,0.55)"
+      />
+    </svg>
+  )
+}
+
 const IMAGE_FILES = [
   '01.jpeg', '02.jpeg', '03.jpeg', '04.jpeg', '05.jpeg', '06.png',
   '07.jpeg', '08.png', '09.jpeg', '010.png', '011.jpeg',
@@ -50,8 +70,8 @@ function toSky(src: THREE.MeshStandardMaterial) {
   return sky
 }
 
-function MemoryImages({ onObjectClick }: { onObjectClick: (index: number) => void }) {
-  const textures = useTexture(IMAGE_SRCS)
+function MemoryImages({ srcs, onObjectClick }: { srcs: string[]; onObjectClick: (index: number) => void }) {
+  const textures = useTexture(srcs)
   const refs = useRef<(THREE.Mesh | null)[]>([])
 
   useEffect(() => {
@@ -62,7 +82,7 @@ function MemoryImages({ onObjectClick }: { onObjectClick: (index: number) => voi
   // (droites/verticales) face au parcours pour rester lisibles au passage.
   const placements = useMemo(
     () =>
-      IMAGE_SRCS.map((_, i) => {
+      srcs.map((_, i) => {
         const t = Math.min((i + 0.5) / IMAGE_SRCS.length, 0.9999)
         const p = CURVE.getPointAt(t)
         const tan = CURVE.getTangentAt(t)
@@ -73,7 +93,7 @@ function MemoryImages({ onObjectClick }: { onObjectClick: (index: number) => voi
         const yaw = Math.atan2(p.x - pos.x, p.z - pos.z)
         return { pos, yaw }
       }),
-    []
+    [srcs.length]
   )
 
   // Légère oscillation : les images flottent.
@@ -112,11 +132,13 @@ function MemoryImages({ onObjectClick }: { onObjectClick: (index: number) => voi
 }
 
 function Scene({
+  imageSrcs,
   progressRef,
   snapTargetRef,
   onObjectClick,
   onReady,
 }: {
+  imageSrcs: string[]
   progressRef: React.MutableRefObject<number>
   snapTargetRef: React.MutableRefObject<number | null>
   onObjectClick: (index: number) => void
@@ -236,9 +258,12 @@ function Scene({
   return (
     <>
       <primitive object={scene} scale={0.9} />
-      <MemoryImages
-        onObjectClick={(index) => { if (!moved.current) onObjectClick(index) }}
-      />
+      <Suspense fallback={null}>
+        <MemoryImages
+          srcs={imageSrcs}
+          onObjectClick={(index) => { if (!moved.current) onObjectClick(index) }}
+        />
+      </Suspense>
     </>
   )
 }
@@ -272,6 +297,8 @@ interface ModelViewerScreenProps {
   onBack: () => void
 }
 
+const EDITS_KEY = 'mimnesko_memory_edits'
+
 export default function ModelViewerScreen({ onBack }: ModelViewerScreenProps) {
   const progressRef = useRef(0)
   const snapTargetRef = useRef<number | null>(null)
@@ -279,6 +306,35 @@ export default function ModelViewerScreen({ onBack }: ModelViewerScreenProps) {
   const [closing, setClosing] = useState(false)
   const [ready, setReady] = useState(false)
   const mountTime = useRef(performance.now())
+
+  // Contenus éditables (texte + image) — restaurés depuis le stockage local.
+  const [messages, setMessages] = useState<string[]>(MESSAGES)
+  const [imageSrcs, setImageSrcs] = useState<string[]>(IMAGE_SRCS)
+  const [editingText, setEditingText] = useState(false)
+  const [draftText, setDraftText] = useState('')
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(EDITS_KEY) || '{}')
+      if (Array.isArray(saved.messages)) setMessages(saved.messages)
+      if (Array.isArray(saved.imageSrcs)) setImageSrcs(saved.imageSrcs)
+    } catch { /* ignore */ }
+  }, [])
+
+  const persist = (next: { messages?: string[]; imageSrcs?: string[] }) => {
+    try {
+      const prev = JSON.parse(localStorage.getItem(EDITS_KEY) || '{}')
+      localStorage.setItem(EDITS_KEY, JSON.stringify({ ...prev, ...next }))
+    } catch { /* ignore */ }
+  }
+
+  const saveText = () => {
+    if (popupIndex === null) return
+    const next = messages.map((m, i) => (i === popupIndex ? draftText : m))
+    setMessages(next)
+    persist({ messages: next })
+    setEditingText(false)
+  }
 
   // On garde le loader au moins 5 s pour avoir le temps de tout lire.
   const handleReady = () => {
@@ -347,6 +403,7 @@ export default function ModelViewerScreen({ onBack }: ModelViewerScreenProps) {
 
         <Suspense fallback={null}>
           <Scene
+            imageSrcs={imageSrcs}
             progressRef={progressRef}
             snapTargetRef={snapTargetRef}
             onObjectClick={(index) => setPopupIndex(index)}
@@ -371,11 +428,54 @@ export default function ModelViewerScreen({ onBack }: ModelViewerScreenProps) {
       )}
 
       {popupIndex !== null && (
-        <div className="mvs-popup-backdrop" onClick={() => setPopupIndex(null)}>
+        <div
+          className="mvs-popup-backdrop"
+          onClick={() => { setEditingText(false); setPopupIndex(null) }}
+        >
           <div className="mvs-popup-card" onClick={(e) => e.stopPropagation()}>
-            <button className="mvs-popup-close" onClick={() => setPopupIndex(null)}>×</button>
-            <img className="mvs-popup-img" src={IMAGE_SRCS[popupIndex]} alt="Souvenir" />
-            <p className="mvs-popup-text">{MESSAGES[popupIndex]}</p>
+            <button
+              className="mvs-popup-close"
+              title="Fermer"
+              aria-label="Fermer"
+              onClick={() => { setEditingText(false); setPopupIndex(null) }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+
+            <img className="mvs-popup-img" src={imageSrcs[popupIndex]} alt="Souvenir" />
+
+            {editingText ? (
+              <div className="mvs-edit-area">
+                <textarea
+                  className="mvs-edit-input"
+                  value={draftText}
+                  autoFocus
+                  rows={3}
+                  onChange={(e) => setDraftText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) saveText()
+                    if (e.key === 'Escape') setEditingText(false)
+                  }}
+                />
+                <div className="mvs-edit-actions">
+                  <button className="mvs-edit-cancel" onClick={() => setEditingText(false)}>Annuler</button>
+                  <button className="mvs-edit-save" onClick={saveText}>Enregistrer</button>
+                </div>
+              </div>
+            ) : (
+              <p className="mvs-popup-text">
+                {messages[popupIndex]}
+                <button
+                  className="mvs-edit-btn mvs-edit-btn--text"
+                  title="Modifier le texte"
+                  onClick={() => { setDraftText(messages[popupIndex]); setEditingText(true) }}
+                >
+                  <PenIcon />
+                </button>
+              </p>
+            )}
           </div>
         </div>
       )}

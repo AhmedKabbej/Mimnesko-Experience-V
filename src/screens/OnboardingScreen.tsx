@@ -28,9 +28,10 @@ function InfomaniakLogo() {
 // ─────────────────── Slides data ───────────────────
 
 const SLIDES = [
+  //rajouter la bold bricolage grotesque pour le titre
   {
-    title: "Bienvenue sur Mimneskō",
-    body: "Une expérience immersive et poétique qui transforme votre manière de conserver et ressentir vos souvenirs numériques.\nInterface narrative qui honore vos souvenirs au lieu de les monétiser. Regroupez vos photos et vidéos en un archivage émotionnel et immersif.",
+    title: "Redécouvrir vos souvenirs",
+    body: "Découvrez une nouvelle façon de revivre vos souvenirs dans une expérience immersive. \n Notre interface narrative honore vos souvenirs au lieu de les monétiser en les regroupant en un récap.",
     img: "/onboarding/illu1.png",
   },
   {
@@ -61,10 +62,12 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   // step: 0=splash, 1-5=slides, 6=final
   const [step, setStep]                     = useState(0)
   const [showInfomaniak, setShowInfomaniak] = useState(false)
+  const [showPermission, setShowPermission] = useState(false)
   const splashRef = useRef<HTMLDivElement>(null)
   const slideRef  = useRef<HTMLDivElement>(null)
   const finalRef  = useRef<HTMLDivElement>(null)
   const sheetRef  = useRef<HTMLDivElement>(null)
+  const permRef   = useRef<HTMLDivElement>(null)
 
   // Splash entrance animation
   useEffect(() => {
@@ -99,6 +102,15 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
     )
   }, [showInfomaniak])
 
+  // Permission alert pop-in (iOS style)
+  useEffect(() => {
+    if (!showPermission || !permRef.current) return
+    gsap.fromTo(permRef.current,
+      { scale: 1.12, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.6)' }
+    )
+  }, [showPermission])
+
   const goToStep = useCallback((next: number, dir: 1 | -1 = 1) => {
     const el = step >= 1 && step <= 5 ? slideRef.current : step === 6 ? finalRef.current : null
     const doTransition = (cb: () => void) => {
@@ -124,6 +136,15 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const closeInfomaniak = () => {
     if (!sheetRef.current) return
     gsap.to(sheetRef.current, { y: '100%', duration: 0.35, ease: 'power3.in', onComplete: () => setShowInfomaniak(false) })
+  }
+
+  // Dismiss permission alert, then optionally finish onboarding
+  const dismissPermission = (granted: boolean) => {
+    if (!permRef.current) { setShowPermission(false); if (granted) onComplete(); return }
+    gsap.to(permRef.current, {
+      scale: 0.92, opacity: 0, duration: 0.2, ease: 'power2.in',
+      onComplete: () => { setShowPermission(false); if (granted) onComplete() }
+    })
   }
 
   const slideIndex = step - 1 // 0-4 for slides 1-5
@@ -190,11 +211,11 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
           <div className="ob-final-sub ob-anim">
             <p>Prêt à commencer ?</p>
-            <p>Déposer vos fichiers, on s'occupe du reste.</p>
+            <p>Déposer vos images, on s'occupe du reste.</p>
           </div>
 
-          <button className="ob-final-cta ob-anim" onClick={onComplete}>
-            Commencer l'expérience
+          <button className="ob-final-cta ob-anim" onClick={() => setShowPermission(true)}>
+            Accéder au cloud
           </button>
 
           <div className="ob-final-meta ob-anim">
@@ -245,6 +266,33 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
             <button className="ob-sheet-cta" onClick={closeInfomaniak}>Compris</button>
           </div>
         </>
+      )}
+
+      {/* ── PERMISSION ALERT (iOS style) ── */}
+      {showPermission && (
+        <div className="ob-perm-overlay">
+          <div className="ob-perm-alert" ref={permRef}>
+            <div className="ob-perm-icon">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="5" width="18" height="14" rx="2.4" stroke="white" strokeWidth="1.8"/>
+                <circle cx="8.5" cy="10" r="1.6" fill="white"/>
+                <path d="M5 17l4.5-4.5 3 3L16 11l3 3.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className="ob-perm-title">« Mimneskō » souhaite accéder à vos photos</h3>
+            <p className="ob-perm-msg">
+              L'accès à votre galerie et à vos médias permet à votre cloud privé d'importer vos photos et vidéos pour créer vos souvenirs. Vos fichiers sont chiffrés sur votre appareil — personne d'autre n'y accède.
+            </p>
+            <div className="ob-perm-actions">
+              <button className="ob-perm-btn ob-perm-btn--deny" onClick={() => dismissPermission(false)}>
+                Ne pas autoriser
+              </button>
+              <button className="ob-perm-btn ob-perm-btn--allow" onClick={() => dismissPermission(true)}>
+                Autoriser l'accès
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

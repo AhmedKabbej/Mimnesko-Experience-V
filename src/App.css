@@ -86,8 +86,9 @@
 
 /* ==================== TYPOGRAPHY ==================== */
 .subtitle {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-family: var(--font-subtitle);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -100,8 +101,9 @@
 }
 
 .title {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-regular);
+  font-family: var(--font-title);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-relaxed);
   letter-spacing: -0.2px;
   color: var(--color-content-primary);

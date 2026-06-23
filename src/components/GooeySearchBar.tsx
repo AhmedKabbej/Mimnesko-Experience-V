@@ -122,8 +122,8 @@ export default function GooeySearchBar({ onSelectFilter, onStart, onOpenChange }
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter' && value.trim()) onStart?.(value) }}
-          placeholder="Rechercher un souvenir…"
-          aria-label="Rechercher un souvenir"
+          placeholder="Choisissez une période…"
+          aria-label="Choisissez une période"
         />
       </div>
 

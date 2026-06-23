@@ -235,7 +235,7 @@ export default function MesSouvenirsScreen({ onBack }: MesSouvenirsScreenProps) 
           <input
             type="text"
             className="ms-search-input"
-            placeholder="Rechercher un souvenir..."
+            placeholder="Choisissez une période..."
             value={query}
             onChange={e => setQuery(e.target.value)}
           />

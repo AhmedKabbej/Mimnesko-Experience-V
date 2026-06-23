@@ -33,8 +33,9 @@
 }
 
 .ob-splash-logo {
+  font-family: var(--font-title);
   font-size: clamp(44px, 10vw, 64px);
-  font-weight: 800;
+  font-weight: 600;
   color: white;
   letter-spacing: -1.5px;
   margin: 0;
@@ -42,8 +43,9 @@
 }
 
 .ob-splash-sub {
-  font-size: 16px;
-  font-weight: 400;
+  font-family: var(--font-subtitle);
+  font-size: 25px;
+  font-weight: 500;
   color: rgba(255,255,255,0.85);
   letter-spacing: 0.02em;
   margin: 0;
@@ -91,8 +93,9 @@
 .ob-text-area::-webkit-scrollbar { display: none; }
 
 .ob-slide-title {
-  font-size: clamp(20px, 5vw, 26px);
-  font-weight: 700;
+  font-family: var(--font-title);
+  font-size: clamp(30px, 7.2vw, 38px);
+  font-weight: 600;
   color: var(--ob-orange);
   letter-spacing: -0.3px;
   margin: 0;
@@ -101,9 +104,11 @@
 }
 
 .ob-slide-body {
-  font-size: 14px;
+  font-family: var(--font-subtitle);
+  font-size: 23px;
+  font-weight: 500;
   color: var(--color-gray-2);
-  line-height: 1.65;
+  line-height: 1.5;
   margin: 0;
   text-align: center;
 }
@@ -229,8 +234,9 @@
 }
 
 .ob-final-title {
-  font-size: clamp(26px, 7vw, 36px);
-  font-weight: 800;
+  font-family: var(--font-title);
+  font-size: clamp(38px, 9.6vw, 52px);
+  font-weight: 600;
   color: var(--ob-orange);
   text-align: center;
   line-height: 1.2;
@@ -239,10 +245,12 @@
 }
 
 .ob-final-sub {
+  font-family: var(--font-subtitle);
+  font-weight: 500;
   text-align: center;
   color: var(--color-gray-2);
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 24px;
+  line-height: 1.35;
   margin-bottom: 28px;
   display: flex;
   flex-direction: column;
@@ -430,6 +438,93 @@
 
 .ob-sheet-cta:hover { background: #e85f00; }
 
+/* ─── PERMISSION ALERT (iOS style) ─── */
+.ob-perm-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.ob-perm-alert {
+  width: 100%;
+  max-width: 300px;
+  background: rgba(248, 247, 245, 0.92);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-radius: 20px;
+  padding: 22px 20px 0;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.ob-perm-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  margin: 0 auto 14px;
+  background: linear-gradient(160deg, var(--ob-orange-light) 0%, var(--ob-orange) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(255, 106, 0, 0.32);
+}
+
+.ob-perm-title {
+  font-family: var(--font-family);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-dark);
+  line-height: 1.3;
+  margin: 0 0 8px;
+}
+
+.ob-perm-msg {
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-gray-2);
+  line-height: 1.45;
+  margin: 0 0 18px;
+}
+
+.ob-perm-actions {
+  display: flex;
+  flex-direction: column;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.14);
+  margin: 0 -20px;
+}
+
+.ob-perm-btn {
+  background: none;
+  border: none;
+  padding: 14px 8px;
+  font-family: var(--font-family);
+  font-size: 17px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.ob-perm-btn:active { background: rgba(0, 0, 0, 0.05); }
+
+.ob-perm-btn--deny {
+  color: var(--color-gray-2);
+  font-weight: 400;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.14);
+}
+
+.ob-perm-btn--allow {
+  color: #0A84FF;
+  font-weight: 700;
+}
+
 /* ─── PC VERSION (≥ 768px) ─── */
 @media (min-width: 768px) {
 
@@ -474,8 +569,8 @@
     overflow-y: auto;
   }
 
-  .ob-slide-title { font-size: 32px; text-align: left; }
-  .ob-slide-body  { font-size: 15px; text-align: left; }
+  .ob-slide-title { font-size: 44px; text-align: left; }
+  .ob-slide-body  { font-size: 22px; text-align: left; }
 
   .ob-bottom {
     position: absolute;
@@ -505,7 +600,7 @@
   }
 
   .ob-check-wrap { align-self: center; width: 88px; }
-  .ob-final-title { font-size: 44px; }
+  .ob-final-title { font-size: 60px; }
 
 
   /* Bottom sheet: centered card on PC */
@@ -527,7 +622,7 @@
 @media (min-width: 1280px) {
   .ob-illu-wrap { flex: 0 0 50%; }
   .ob-text-area { padding: 64px 80px 24px; }
-  .ob-slide-title { font-size: 38px; }
+  .ob-slide-title { font-size: 50px; }
   .ob-nav { padding: 0 80px; }
   .ob-dots { padding-left: 80px; }
 }

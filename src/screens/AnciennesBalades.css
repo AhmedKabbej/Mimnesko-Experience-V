@@ -37,7 +37,8 @@
 .ab-icon-btn:hover { background: var(--color-light-gray-1); }
 
 .ab-title {
-  font-size: 17px;
+  font-family: var(--font-title);
+  font-size: 22px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-dark);
   letter-spacing: -0.2px;
@@ -227,7 +228,8 @@
 }
 
 .ab-item-title {
-  font-size: 14px;
+  font-family: var(--font-title);
+  font-size: 18px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-dark);
   white-space: nowrap;
@@ -236,7 +238,9 @@
 }
 
 .ab-item-sub {
-  font-size: 12px;
+  font-family: var(--font-subtitle);
+  font-weight: 500;
+  font-size: 16px;
   color: var(--color-gray-1);
 }
 

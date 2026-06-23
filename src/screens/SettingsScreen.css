@@ -44,7 +44,8 @@
 .st-back-btn:hover { opacity: 0.6; }
 
 .st-title {
-  font-size: 22px;
+  font-family: var(--font-title);
+  font-size: 27px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-dark);
   letter-spacing: -0.3px;
@@ -424,16 +425,19 @@
 }
 
 .rgpd-title {
-  font-size: 26px;
-  font-weight: var(--font-weight-bold);
+  font-family: var(--font-title);
+  font-size: 36px;
+  font-weight: var(--font-weight-semibold);
   color: var(--color-content-primary);
   letter-spacing: -0.5px;
   margin-bottom: 10px;
 }
 
 .rgpd-subtitle {
-  font-size: 14px;
-  line-height: 1.6;
+  font-family: var(--font-subtitle);
+  font-weight: 500;
+  font-size: 21px;
+  line-height: 1.45;
   color: var(--color-content-secondary);
   max-width: 460px;
 }
@@ -468,7 +472,8 @@
 }
 
 .rgpd-card-title {
-  font-size: 15px;
+  font-family: var(--font-title);
+  font-size: 18px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-content-primary);
   margin-bottom: 5px;
@@ -482,8 +487,9 @@
 
 /* Rights */
 .rgpd-section-title {
-  font-size: 18px;
-  font-weight: var(--font-weight-bold);
+  font-family: var(--font-title);
+  font-size: 23px;
+  font-weight: var(--font-weight-semibold);
   color: var(--color-content-primary);
   margin-bottom: 14px;
   letter-spacing: -0.3px;

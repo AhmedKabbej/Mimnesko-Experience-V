@@ -30,7 +30,8 @@
 .face-title {
   user-select: none;
   position: absolute;
-  font-weight: 900;
+  font-family: var(--font-title);
+  font-weight: 600;
   font-size: 3rem;
   left: 1.6em;
   top: 50%;

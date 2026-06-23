@@ -57,7 +57,7 @@ export default function HomeCard({ visible, onStartJourney }: HomeCardProps) {
 
           <div className="text-section">
             <p className="title" ref={titleRef}>
-              Marche, ressens, capture… et laisse tes souvenirs prendre vie.
+              Flâne et redécouvre tes souvenirs.
             </p>
           </div>
         </div>
