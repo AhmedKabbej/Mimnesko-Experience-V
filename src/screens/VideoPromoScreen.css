@@ -1,0 +1,91 @@
+.promo-root {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+.promo-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  background: #000;
+}
+
+/* Conteneur scrollable transparent par-dessus le canvas. */
+.promo-scroll {
+  position: fixed;
+  inset: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  z-index: 2;
+}
+
+.promo-spacer {
+  width: 1px;
+}
+
+/* Loader */
+.promo-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #000;
+  color: #fff;
+  font-family: inherit;
+}
+
+.promo-loader-title {
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+.promo-loader-bar {
+  width: min(280px, 60vw);
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.promo-loader-fill {
+  height: 100%;
+  background: #ff6a00;
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.promo-loader-pct {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+/* Indice de scroll */
+.promo-hint {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  z-index: 3;
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: promo-hint-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes promo-hint-pulse {
+  0%, 100% { opacity: 0.35; transform: translateX(-50%) translateY(0); }
+  50%      { opacity: 0.85; transform: translateX(-50%) translateY(4px); }
+}

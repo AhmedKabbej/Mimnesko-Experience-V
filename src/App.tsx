@@ -13,8 +13,9 @@ const ModelViewerScreen = lazy(() => import('./screens/ModelViewerScreen'))
 const SettingsScreen    = lazy(() => import('./screens/SettingsScreen'))
 const MesSouvenirsScreen = lazy(() => import('./screens/MesSouvenirsScreen'))
 const AnciennesBalades  = lazy(() => import('./screens/AnciennesBalades'))
+const VideoPromoScreen  = lazy(() => import('./screens/VideoPromoScreen'))
 
-type ExperienceType = 'intro' | 'gallery' | 'modelviewer' | 'settings' | 'souvenirs' | 'balades'
+type ExperienceType = 'intro' | 'gallery' | 'modelviewer' | 'settings' | 'souvenirs' | 'balades' | 'promo'
 const NAV_SCREENS: ExperienceType[] = ['intro', 'souvenirs', 'balades', 'settings']
 
 // ── Routing : un chemin d'URL par page ──
@@ -25,6 +26,7 @@ const PATHS: Record<ExperienceType, string> = {
   settings: '/parametres',
   souvenirs: '/souvenirs',
   balades: '/balades',
+  promo: '/promo',
 }
 const EXP_BY_PATH: Record<string, ExperienceType> = Object.fromEntries(
   Object.entries(PATHS).map(([exp, path]) => [path, exp as ExperienceType])
@@ -191,7 +193,16 @@ function App() {
 
       {experience === 'modelviewer' && (
         <Suspense fallback={null}>
-          <ModelViewerScreen onBack={handleBackFromModel} />
+          <ModelViewerScreen
+            onBack={handleBackFromModel}
+            onFinish={() => setExperience('promo')}
+          />
+        </Suspense>
+      )}
+
+      {experience === 'promo' && (
+        <Suspense fallback={null}>
+          <VideoPromoScreen onBack={() => setExperience('modelviewer')} />
         </Suspense>
       )}
 
