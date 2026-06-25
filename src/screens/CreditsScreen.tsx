@@ -293,6 +293,7 @@ export default function CreditsScreen({ onBack }: CreditsScreenProps) {
         <p className="credits-label">Remerciements</p>
         <ul className="credits-thanks">
           <li>Ahcene Oumedah</li>
+          <li>Tess Valen </li>
         </ul>
 
         <div className="credits-rule" />
