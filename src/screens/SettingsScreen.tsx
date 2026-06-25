@@ -6,20 +6,23 @@ import {
   IconBell,
   IconDownload,
   IconTrash,
+  IconStar,
 } from '../components/icons'
+import CreditsScreen from './CreditsScreen'
 import './SettingsScreen.css'
 
 interface SettingsScreenProps {
   onBack: () => void
 }
 
-type SectionId = 'stockage' | 'confidentialite' | 'notifications' | 'gestion'
+type SectionId = 'stockage' | 'confidentialite' | 'notifications' | 'gestion' | 'apropos'
 
 const NAV_ITEMS: { id: SectionId; label: string; icon: React.ReactNode }[] = [
   { id: 'stockage',         label: 'Stockage des données', icon: <IconDatabase size={18} /> },
   { id: 'confidentialite',  label: 'Confidentialité',      icon: <IconShield size={18} /> },
   { id: 'notifications',    label: 'Notifications',        icon: <IconBell size={18} /> },
   { id: 'gestion',          label: 'Gestion des données',  icon: <IconDatabase size={18} /> },
+  { id: 'apropos',          label: 'À propos',             icon: <IconStar size={18} /> },
 ]
 
 function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
@@ -44,9 +47,13 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [syncAlerts, setSyncAlerts]                 = useState(false)
   const [showRgpd, setShowRgpd]                     = useState(false)
+  const [showCredits, setShowCredits]               = useState(false)
 
   if (showRgpd) {
     return <RgpdScreen onBack={() => setShowRgpd(false)} />
+  }
+  if (showCredits) {
+    return <CreditsScreen onBack={() => setShowCredits(false)} />
   }
 
   return (
@@ -66,6 +73,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
           <SectionConfidentialite cgdAccepted={cgdAccepted} setCgdAccepted={setCgdAccepted} onOpenRgpd={() => setShowRgpd(true)} />
           <SectionNotifications notificationsEnabled={notificationsEnabled} setNotificationsEnabled={setNotificationsEnabled} syncAlerts={syncAlerts} setSyncAlerts={setSyncAlerts} />
           <SectionGestion />
+          <SectionApropos onOpenCredits={() => setShowCredits(true)} />
         </div>
       </div>
 
@@ -113,6 +121,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
             />
           )}
           {activeSection === 'gestion' && <SectionGestion />}
+          {activeSection === 'apropos' && <SectionApropos onOpenCredits={() => setShowCredits(true)} />}
         </main>
       </div>
 
@@ -230,12 +239,25 @@ function SectionNotifications({ notificationsEnabled, setNotificationsEnabled, s
 }
 
 function SectionGestion() {
+  const downloadGuide = () => {
+    const a = document.createElement('a')
+    a.href = '/Guide_Mimnesko_Install.pdf'
+    a.download = 'Guide_Mimnesko_Install.pdf'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+  }
+
   return (
     <section className="st-section">
       <div className="st-section-header">
         <IconDatabase size={14} />
         <span>GESTION DES DONNÉES</span>
       </div>
+      <button className="st-card st-action-btn" onClick={downloadGuide}>
+        <span className="st-label">Guide d'utilisation (PDF)</span>
+        <IconDownload size={20} />
+      </button>
       <button className="st-card st-action-btn">
         <span className="st-label">Exporter mes données</span>
         <IconDownload size={20} />
@@ -243,6 +265,21 @@ function SectionGestion() {
       <button className="st-card st-action-btn st-action-btn--danger">
         <span className="st-label">Supprimer mes données</span>
         <IconTrash size={20} />
+      </button>
+    </section>
+  )
+}
+
+function SectionApropos({ onOpenCredits }: { onOpenCredits: () => void }) {
+  return (
+    <section className="st-section">
+      <div className="st-section-header">
+        <IconStar size={14} />
+        <span>À PROPOS</span>
+      </div>
+      <button className="st-card st-action-btn" onClick={onOpenCredits}>
+        <span className="st-label">Crédits</span>
+        <IconStar size={20} />
       </button>
     </section>
   )

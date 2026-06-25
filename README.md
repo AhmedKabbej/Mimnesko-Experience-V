@@ -43,6 +43,7 @@ Chaque écran a son URL : on peut y accéder **directement** (deep-link) sans re
 - L'onboarding ne s'affiche **qu'une fois** (mémorisé dans `localStorage` → clé `mimnesko_onboarded`). Pour le revoir : `localStorage.removeItem('mimnesko_onboarded')` en console.
 - Retour depuis `/experience` : revient à la page d'origine du lancement (`/`, `/galerie` ou `/balades`).
 - En **production (Vercel)**, `vercel.json` réécrit toutes les routes vers `index.html` pour que recharger une URL profonde (ex. `/souvenirs`) fonctionne.
+- **`/pdf`** → raccourci vers le guide d'installation (`/Guide_Mimnesko_Install.pdf`). Fonctionne en prod (rewrite `vercel.json`) et en local (plugin `pdfShortcut` dans `vite.config.ts`, dev + preview).
 
 ---
 

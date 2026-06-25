@@ -67,7 +67,7 @@ const SLIDES: { caption: string; title: ReactNode; body: string; img: string; rs
   {
     caption: "Découvrez nos actions dans notre",
     title: <><span className="ob-title-xl">Go</span><br />Green</>,
-    body: "La chaleur de notre data center chauffe 6 000 foyers en Suisse.",
+    body: "La chaleur de notre data center chauffe 6 000 foyers en Suisse.",
     img: '/onboarding/illu2.png',
     rse: true,
   },

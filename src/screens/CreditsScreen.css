@@ -1,0 +1,390 @@
+/* ==================== CRÉDITS (générique de fin) ==================== */
+.credits-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: radial-gradient(120% 80% at 50% 0%, #150d05 0%, #000 60%);
+  overflow: hidden;
+  color: #fff;
+  font-family: var(--font-family);
+}
+
+/* Léger voile orange en haut et en bas → respiration cinéma */
+.credits-screen::before,
+.credits-screen::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 22%;
+  z-index: 2;
+  pointer-events: none;
+}
+.credits-screen::before {
+  top: 0;
+  background: linear-gradient(to bottom, #000 8%, rgba(0, 0, 0, 0) 100%);
+}
+.credits-screen::after {
+  bottom: 0;
+  background: linear-gradient(to top, #000 8%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* Conteneur scrollable (défilement auto + scroll manuel) */
+.credits-scroll {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.credits-scroll::-webkit-scrollbar { display: none; }
+
+/* Rouleau de contenu */
+.credits-roll {
+  width: min(560px, calc(100% - 48px));
+  margin: 0 auto;
+  padding-top: 100vh;   /* écran noir au départ, puis le titre monte par le bas */
+  padding-bottom: 40vh; /* la dernière ligne peut remonter jusqu'au centre */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* En-tête */
+.credits-logo {
+  font-family: var(--font-title);
+  font-size: clamp(46px, 11vw, 68px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  margin: 0;
+  background: linear-gradient(160deg, #FFB27C 0%, #FF6A00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.credits-tagline {
+  margin: 10px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Séparateur */
+.credits-rule {
+  width: 46px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-orange, #FF6A00);
+  margin: 54px 0;
+  opacity: 0.85;
+}
+
+/* Intitulés de section */
+.credits-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-orange, #FF6A00);
+  margin: 0 0 30px;
+}
+
+/* Personnes */
+.credits-person { margin-bottom: 56px; }
+.credits-person:last-of-type { margin-bottom: 0; }
+
+.credits-role {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 178, 124, 0.92);
+  margin: 0 0 8px;
+}
+.credits-name {
+  font-family: var(--font-title);
+  font-size: clamp(30px, 7vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: #fff;
+  margin: 0 0 18px;
+}
+.credits-bio {
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 auto;
+  max-width: 46ch;
+}
+
+/* Partenaire */
+.credits-partner {
+  font-family: var(--font-title);
+  font-size: clamp(26px, 6vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: #fff;
+  margin: 0 0 16px;
+}
+.credits-partner-note {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.68);
+  margin: 0 auto;
+  max-width: 44ch;
+}
+
+/* Remerciements */
+.credits-thanks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.credits-thanks li {
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Pastilles (outils / technologies) */
+.credits-label--mt { margin-top: 40px; }
+
+.credits-tags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 480px;
+}
+.credits-tag {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 8px 15px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.credits-tag--tech {
+  color: rgba(255, 178, 124, 0.95);
+  background: rgba(255, 106, 0, 0.1);
+  border-color: rgba(255, 122, 32, 0.35);
+}
+
+/* ── Production & budget ── */
+.credits-budget {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  margin-top: 6px;
+  font-size: 12.5px;
+}
+.credits-budget th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-orange, #FF6A00);
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 122, 32, 0.4);
+}
+.credits-budget td {
+  padding: 9px 10px;
+  color: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+.credits-budget td:first-child { color: #fff; font-weight: 600; }
+.credits-budget-num { color: rgba(255, 178, 124, 0.95); }
+
+.credits-total {
+  margin: 28px auto 0;
+  padding: 22px 30px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 122, 32, 0.3);
+}
+.credits-total-label {
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55); margin: 0;
+}
+.credits-total-value {
+  font-family: var(--font-title);
+  font-size: 42px; font-weight: 800; letter-spacing: -1px;
+  color: #fff; margin: 8px 0 4px;
+}
+.credits-total-range { font-size: 12px; color: rgba(255, 255, 255, 0.5); margin: 0; }
+
+/* ── Corps de métier & missions ── */
+.credits-trades {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  width: 100%;
+  margin-top: 6px;
+  text-align: left;
+}
+.credits-trade {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.credits-trade-title {
+  font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--color-orange, #FF6A00);
+  margin: 0 0 10px; padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 122, 32, 0.4);
+}
+.credits-trade ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.credits-trade li { font-size: 12px; color: rgba(255, 255, 255, 0.72); line-height: 1.4; }
+
+.credits-note {
+  margin: 22px auto 0;
+  max-width: 48ch;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── Assets & design system (checklist) ── */
+.credits-checklist {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 22px;
+  width: 100%;
+  margin-top: 18px;
+  text-align: left;
+}
+.credits-check-group {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.credits-check-group h4 {
+  font-size: 12px; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase;
+  color: var(--color-orange, #FF6A00);
+  margin: 0 0 10px; padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 122, 32, 0.4);
+}
+.credits-check-group ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.credits-check-group li {
+  position: relative; padding-left: 15px;
+  font-size: 12px; color: rgba(255, 255, 255, 0.68); line-height: 1.45;
+}
+.credits-check-group li::before {
+  content: ''; position: absolute; left: 0; top: 7px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255, 122, 32, 0.7);
+}
+
+@media (max-width: 560px) {
+  .credits-trades,
+  .credits-checklist { grid-template-columns: 1fr; }
+  .credits-budget { font-size: 11px; }
+  .credits-budget th, .credits-budget td { padding: 7px 6px; }
+  .credits-total-value { font-size: 36px; }
+}
+
+/* Lien (site du cloud) */
+.credits-link {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 11px 22px;
+  border-radius: 50px;
+  background: rgba(255, 106, 0, 0.14);
+  border: 1px solid rgba(255, 122, 32, 0.5);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.credits-link:hover {
+  background: rgba(255, 106, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Ligne de crédit secondaire (ex. bruitages) */
+.credits-credit-line {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.62);
+  margin: 18px 0 0;
+}
+
+/* École */
+.credits-school { margin-top: 4px; }
+.credits-school-name {
+  font-family: var(--font-title);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.credits-school-prog {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 6px;
+}
+.credits-promo {
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-orange, #FF6A00);
+  margin: 0;
+}
+
+/* Note de clôture (vocation du projet) */
+.credits-disclaimer {
+  margin: 56px auto 0;
+  max-width: 46ch;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+}
+.credits-disclaimer strong {
+  color: rgba(255, 178, 124, 0.95);
+  font-weight: 700;
+}
+
+/* Pied */
+.credits-copyright {
+  margin: 64px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Bouton de sortie en fin de rouleau */
+.credits-exit {
+  margin: 40px 0 0;
+  padding: 13px 28px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 122, 32, 0.5);
+  background: rgba(255, 106, 0, 0.12);
+  color: #fff;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.credits-exit:hover {
+  background: rgba(255, 106, 0, 0.28);
+  transform: translateY(-2px);
+}
