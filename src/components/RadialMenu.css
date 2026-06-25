@@ -183,6 +183,30 @@
   100%{ box-shadow: 0 0 0 0 rgba(255, 106, 0, 0); }
 }
 
+/* ── Hint d'arrivée sur l'accueil : pulsation continue « appuie ici » ── */
+.rm-dot--hint {
+  animation: rm-hint 1.8s ease-out infinite;
+}
+@keyframes rm-hint {
+  0% {
+    box-shadow: 0 2px 12px rgba(255, 106, 0, 0.5), 0 0 0 0 rgba(255, 106, 0, 0.55);
+    filter: brightness(1);
+  }
+  45% {
+    filter: brightness(1.18);
+  }
+  70% {
+    box-shadow: 0 2px 12px rgba(255, 106, 0, 0.5), 0 0 0 13px rgba(255, 106, 0, 0);
+  }
+  100% {
+    box-shadow: 0 2px 12px rgba(255, 106, 0, 0.5), 0 0 0 0 rgba(255, 106, 0, 0);
+    filter: brightness(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-dot--hint { animation: none; }
+}
+
 /* ==================== PC (≥ 900px) ==================== */
 @media (min-width: 900px) {
   .rm-wrap {

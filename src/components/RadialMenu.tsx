@@ -143,7 +143,7 @@ export default function RadialMenu({ active, onNavigate }: RadialMenuProps) {
 
         <button
           ref={dotRef}
-          className={`rm-dot${isOpen ? ' rm-dot--open' : ''}`}
+          className={`rm-dot${isOpen ? ' rm-dot--open' : ''}${active === 'intro' && !isOpen ? ' rm-dot--hint' : ''}`}
           onClick={toggle}
           aria-label={isOpen ? 'Fermer' : 'Navigation'}
           aria-expanded={isOpen}

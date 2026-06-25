@@ -5,18 +5,45 @@
   --ob-orange-light: #FF9A4D;
   --ob-orange-glow: rgba(255, 122, 32, 0.18);
   --ob-ink: #0F0F0F;
-  --ob-gray: #9b9892;
+  --ob-gray: #8a8e84;
 
-  /* Fond DA blanc → orange (suite du tunnel d'onboarding) */
+  /* accent vert sauge (succès / nature — cohérent avec « Go Green ») */
+  --ob-sage: #5f8f52;
+  --ob-sage-light: #7fae6c;
+
+  /* Argenté métallique chromé (base « Gradiant Long White », contraste renforcé
+     pour ressortir sur le fond clair : reflets blancs ↔ gris acier alternés) */
+  --ob-metal: linear-gradient(135deg,
+    #ffffff 0%,
+    #aeb2b8 13%,
+    #f6f7f9 28%,
+    #93989e 45%,
+    #ececef 58%,
+    #a4a8ae 74%,
+    #f4f5f7 88%,
+    #989ca2 100%);
+
+  /* DA calme & naturelle (reprise de l'écran d'accueil — fil rouge du tunnel) */
   /* base nette posée sur l'élément */
-  --ob-bg-warm: linear-gradient(158deg, #ffd9af 0%, #fff2e4 50%, #ffd2a2 100%);
-  /* foyers orange des 4 côtés + centre lumineux → posés sur une couche floutée */
+  --ob-bg-warm:
+    radial-gradient(120% 70% at 18% 6%, rgba(255,255,255,0.7) 0%, transparent 55%),
+    radial-gradient(130% 80% at 86% 102%, rgba(207,224,200,0.6) 0%, transparent 60%),
+    linear-gradient(168deg, #dbe7f1 0%, #e8ede2 46%, #cfe0c8 100%);
+  /* État chaud final : retour à l'orange de la marque (révélé à la dernière page) */
+  --ob-bg-orange:
+    radial-gradient(82% 60% at 50% 10%, rgba(255,150,60,0.6) 0%, transparent 60%),
+    radial-gradient(92% 70% at 50% 108%, rgba(255,118,28,0.62) 0%, transparent 60%),
+    radial-gradient(70% 100% at -8% 50%, rgba(255,138,46,0.4) 0%, transparent 62%),
+    radial-gradient(70% 100% at 108% 50%, rgba(255,120,30,0.45) 0%, transparent 62%),
+    linear-gradient(158deg, #ffd9af 0%, #fff2e4 50%, #ffd2a2 100%);
+
+  /* halos doux des 4 côtés + centre lumineux → posés sur une couche floutée */
   --ob-bg-glow:
-    radial-gradient(78% 64% at 50% 47%, rgba(255,251,246,0.96) 0%, rgba(255,251,246,0.35) 46%, transparent 66%),
-    radial-gradient(125% 54% at 50% -12%, rgba(255,96,4,0.92) 0%, transparent 60%),
-    radial-gradient(125% 56% at 50% 112%, rgba(255,114,18,0.86) 0%, transparent 60%),
-    radial-gradient(52% 128% at -12% 50%, rgba(255,120,24,0.8) 0%, transparent 60%),
-    radial-gradient(52% 128% at 112% 50%, rgba(255,100,10,0.86) 0%, transparent 60%);
+    radial-gradient(78% 64% at 50% 45%, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.32) 46%, transparent 68%),
+    radial-gradient(122% 54% at 50% -12%, rgba(182,206,226,0.7) 0%, transparent 60%),
+    radial-gradient(122% 56% at 50% 112%, rgba(196,219,189,0.72) 0%, transparent 60%),
+    radial-gradient(52% 128% at -12% 50%, rgba(201,223,231,0.55) 0%, transparent 60%),
+    radial-gradient(52% 128% at 112% 50%, rgba(193,217,187,0.6) 0%, transparent 60%);
 }
 
 .ob-screen {
@@ -39,7 +66,7 @@
   isolation: isolate; /* contexte d'empilement : la couche floue reste derrière le contenu */
 }
 
-/* Couche orange floutée (4 côtés) — derrière le contenu */
+/* Couche lumineuse floutée (4 côtés) — derrière le contenu */
 .ob-slide::before,
 .ob-final::before {
   content: "";
@@ -50,6 +77,45 @@
   filter: blur(66px);
   transform: scale(1.2); /* déborde légèrement → pas de bord net après le flou */
   pointer-events: none;
+}
+
+/* Final : couche orange révélée en fondu à l'arrivée (état chaud de la marque) */
+.ob-final::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ob-bg-orange);
+  opacity: 0;
+  transition: opacity 1.4s ease;
+  pointer-events: none;
+}
+.ob-final.is-warm::after { opacity: 1; }
+
+/* Slide : même couche orange, révélée quand la pop-up RSE réchauffe la scène */
+.ob-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ob-bg-orange);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+}
+.ob-slide.is-warm::after { opacity: 1; }
+
+/* Accents qui se réchauffent en même temps que le fond */
+.ob-final .ob-check-circle,
+.ob-final.is-warm .ob-check-circle { transition: background 1.2s ease, box-shadow 1.2s ease; }
+.ob-final.is-warm .ob-check-circle {
+  background: linear-gradient(160deg, var(--ob-orange-light), var(--ob-orange));
+  box-shadow: 0 10px 30px rgba(255,122,32,0.42);
+}
+.ob-final .ob-check-glow,
+.ob-final.is-warm .ob-check-glow { transition: background 1.2s ease; }
+.ob-final.is-warm .ob-check-glow {
+  background: radial-gradient(circle, rgba(255,122,32,0.3) 0%, transparent 70%);
 }
 
 /* ─────────── Buttons & links ─────────── */
@@ -68,16 +134,16 @@
   gap: 8px;
 }
 
+/* Action primaire du tunnel : pill sombre (identique au « Démarrer » de l'accueil) */
 .ob-btn-light {
-  background: #ffffff;
-  color: var(--ob-ink);
-  border: 1px solid rgba(0,0,0,0.08);
-  padding: 15px 32px;
+  background: #1b1b1b;
+  color: #fff;
+  padding: 16px 34px;
   font-size: 16px;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.24);
   min-width: 200px;
 }
-.ob-btn-light:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,0.12); }
+.ob-btn-light:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(0,0,0,0.3); }
 .ob-btn-light:active { transform: translateY(0); }
 
 .ob-arrow { font-size: 1.05em; line-height: 1; }
@@ -298,10 +364,16 @@
   width: 100%;
   max-width: 360px;
   aspect-ratio: 1 / 0.94;
-  background: #faf7f2;
-  border: 1.6px solid rgba(255,122,32,0.55);
+  /* bordure métallique argentée (dégradé sur la border-box, fond uni sur la padding-box) */
+  border: 6px solid transparent;
   border-radius: 30px;
-  box-shadow: 0 0 0 5px rgba(255,122,32,0.06), 0 18px 40px rgba(0,0,0,0.05);
+  background:
+    linear-gradient(#f6f8f3, #f6f8f3) padding-box,
+    var(--ob-metal) border-box;
+  box-shadow:
+    0 0 0 1px rgba(40,46,54,0.22),          /* liseré extérieur sombre → détache du fond clair */
+    inset 0 0 0 1px rgba(30,34,40,0.28),     /* liseré intérieur → sépare le métal de l'image */
+    0 18px 44px rgba(30,40,30,0.18);         /* ombre portée plus marquée */
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
@@ -332,6 +404,8 @@
   letter-spacing: -1.4px;
   color: var(--ob-ink);
   margin: 0 0 14px;
+  /* halo clair (signature de l'accueil) → titre lisible sur le dégradé */
+  text-shadow: 0 2px 24px rgba(255,255,255,0.5);
 }
 .ob-title-xl { font-size: 1.5em; line-height: 0.9; }
 
@@ -363,7 +437,7 @@
   padding-left: 32px;
   padding-right: 32px;
   background: var(--ob-bg-warm);
-  overflow-y: auto;
+  overflow: hidden; /* tout doit tenir dans l'écran — pas de scroll */
 }
 
 .ob-final-brand {
@@ -381,14 +455,15 @@
 
 .ob-check-wrap {
   position: relative;
-  width: 88px; height: 88px;
+  width: clamp(64px, 11vh, 88px); height: clamp(64px, 11vh, 88px);
   display: flex; align-items: center; justify-content: center;
-  margin: 24px 0 28px;
+  margin: clamp(8px, 2.4vh, 24px) 0 clamp(12px, 2.6vh, 28px);
+  flex-shrink: 0;
 }
 .ob-check-glow {
   position: absolute; inset: -14px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,122,32,0.28) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(122,170,108,0.32) 0%, transparent 70%);
   animation: ob-glow-pulse 2.5s ease-in-out infinite;
 }
 @keyframes ob-glow-pulse {
@@ -396,48 +471,49 @@
   50% { opacity: 1; transform: scale(1.08); }
 }
 .ob-check-circle {
-  width: 80px; height: 80px;
+  width: clamp(58px, 10vh, 80px); height: clamp(58px, 10vh, 80px);
   border-radius: 50%;
-  background: linear-gradient(160deg, var(--ob-orange-light), var(--ob-orange));
+  background: linear-gradient(160deg, var(--ob-sage-light), var(--ob-sage));
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 10px 30px rgba(255,122,32,0.42);
+  box-shadow: 0 10px 30px rgba(95,143,82,0.42);
 }
 
 .ob-final-title {
   font-family: var(--font-title);
   font-weight: 800;
-  font-size: clamp(36px, 9vw, 48px);
+  font-size: clamp(34px, 8.4vw, 48px);
   line-height: 1.05;
   letter-spacing: -1.2px;
   color: var(--ob-ink);
-  margin: 0 0 14px;
+  margin: 0 0 clamp(8px, 1.8vh, 14px);
 }
 .ob-final-sub {
   font-family: var(--font-subtitle);
   font-weight: 500;
-  font-size: 21px;
+  font-size: clamp(17px, 4.6vw, 21px);
   line-height: 1.3;
   color: #6f6c66;
-  margin-bottom: 30px;
+  margin-bottom: clamp(16px, 3.2vh, 30px);
   display: flex; flex-direction: column; gap: 2px;
 }
 .ob-final-sub p { margin: 0; }
 
 .ob-final-cta {
-  background: linear-gradient(150deg, var(--ob-orange-light), var(--ob-orange));
+  background: #1b1b1b;
   color: #fff;
-  padding: 16px 40px;
+  padding: 17px 40px;
   font-size: 16px;
   width: 100%;
   max-width: 320px;
-  box-shadow: 0 12px 30px rgba(255,122,32,0.4);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.24);
   margin-bottom: 12px;
 }
-.ob-final-cta:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(255,122,32,0.5); }
+.ob-final-cta:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(0,0,0,0.3); }
 
 .ob-final-info {
-  background: #f1eee9;
+  background: rgba(255,255,255,0.55);
   color: var(--ob-ink);
+  border: 1px solid rgba(60,80,60,0.1);
   padding: 13px 24px;
   font-size: 14px;
   font-weight: 500;
@@ -445,11 +521,12 @@
   max-width: 320px;
   margin-bottom: auto;
 }
-.ob-final-info:hover { background: #e9e5de; }
+.ob-final-info:hover { background: rgba(255,255,255,0.8); }
 
 .ob-final-meta {
   display: flex; flex-direction: column; align-items: center; gap: 4px;
-  margin-top: 28px;
+  margin-top: clamp(14px, 2.6vh, 28px);
+  flex-shrink: 0;
 }
 .ob-final-meta span { font-size: 12px; color: var(--ob-gray); }
 
@@ -505,8 +582,8 @@
 }
 .ob-perm-icon {
   width: 56px; height: 56px; border-radius: 16px; margin: 0 auto 14px;
-  background: linear-gradient(160deg, var(--ob-orange-light), var(--ob-orange));
-  display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(255,122,32,0.32);
+  background: linear-gradient(160deg, #FFB066, #F2820A);
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(242,130,10,0.32);
 }
 .ob-perm-title { font-family: var(--font-family); font-size: 17px; font-weight: 700; color: var(--ob-ink); line-height: 1.3; margin: 0 0 8px; }
 .ob-perm-msg { font-family: var(--font-family); font-size: 13px; color: #555; line-height: 1.45; margin: 0 0 18px; }
@@ -515,6 +592,133 @@
 .ob-perm-btn:active { background: rgba(0,0,0,0.05); }
 .ob-perm-btn--deny { color: #555; font-weight: 400; border-bottom: 0.5px solid rgba(0,0,0,0.14); }
 .ob-perm-btn--allow { color: #0A84FF; font-weight: 700; }
+
+/* ─────────── LIEN « rubrique RSE » (slide Go Green) ─────────── */
+.ob-rse-link {
+  display: inline;
+  background: none;
+  border: none;
+  padding: 0 0 1px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--ob-sage);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+  transition: color var(--transition-fast);
+}
+.ob-rse-link:hover { color: var(--ob-ink); }
+
+/* ─────────── MINI POP-UP RSE (bottom sheet, vert → orange) ─────────── */
+.ob-rse-overlay {
+  position: absolute; inset: 0; z-index: 20;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(20,28,20,0.2);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  animation: ob-rse-fade 0.25s ease;
+}
+@keyframes ob-rse-fade { from { opacity: 0; } to { opacity: 1; } }
+.ob-rse-pop {
+  position: relative;
+  width: 100%; max-width: 460px;
+  background: rgba(248,250,246,0.97);
+  backdrop-filter: saturate(160%) blur(16px); -webkit-backdrop-filter: saturate(160%) blur(16px);
+  border-top: 1.5px solid rgba(95,143,82,0.3);
+  border-radius: 24px 24px 0 0;
+  padding: 14px 24px calc(26px + env(safe-area-inset-bottom, 0px));
+  text-align: center;
+  box-shadow: 0 -18px 50px rgba(30,50,30,0.3);
+  animation: ob-rse-up 0.42s cubic-bezier(.2,.9,.3,1.05);
+  transition: border-color 1.2s ease;
+}
+.ob-rse-pop.is-warm { border-top-color: rgba(255,122,32,0.4); }
+@keyframes ob-rse-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+/* poignée du sheet */
+.ob-rse-pop::before {
+  content: "";
+  display: block;
+  width: 38px; height: 4px; border-radius: 2px;
+  background: rgba(0,0,0,0.16);
+  margin: 0 auto 16px;
+}
+.ob-rse-badge {
+  position: relative;
+  isolation: isolate; /* contient la couche orange (z-index:-1) sous le texte « RSE » */
+  display: inline-block;
+  font-family: var(--font-family);
+  font-size: 12px; font-weight: 800; letter-spacing: 0.12em;
+  color: #fff;
+  background: linear-gradient(160deg, var(--ob-sage-light), var(--ob-sage));
+  padding: 5px 12px; border-radius: 9999px; margin-bottom: 12px;
+  box-shadow: 0 6px 16px rgba(95,143,82,0.32);
+  transition: box-shadow 1.2s ease;
+}
+/* Couche orange révélée en fondu (les dégradés ne s'animent pas → on crossfade l'opacité,
+   exactement comme le fond → vert et orange transitionnent ensemble) */
+.ob-rse-badge::after {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(160deg, var(--ob-orange-light), var(--ob-orange));
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.ob-rse-pop.is-warm .ob-rse-badge { box-shadow: 0 6px 16px rgba(255,122,32,0.36); }
+.ob-rse-pop.is-warm .ob-rse-badge::after { opacity: 1; }
+.ob-rse-title {
+  font-family: var(--font-title);
+  font-size: 21px; font-weight: 800; letter-spacing: -0.4px;
+  color: var(--ob-ink); margin: 0 0 8px;
+}
+.ob-rse-text {
+  font-family: var(--font-family);
+  font-size: 14px; line-height: 1.5; color: #4a5048; margin: 0 0 18px;
+}
+.ob-rse-close {
+  width: 100%;
+  background: var(--ob-ink); color: #fff; border: none; border-radius: 9999px;
+  padding: 14px; font-family: var(--font-family); font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+}
+.ob-rse-close:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,0,0,0.26); }
+
+/* ─────────── CHIP « Cloud Mimneskō ready » (final) ─────────── */
+.ob-ready-chip {
+  position: absolute;
+  top: calc(max(env(safe-area-inset-top, 0px), 18px) + clamp(36px, 6vh, 56px));
+  left: 50%;
+  z-index: 6;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 15px;
+  white-space: nowrap;
+  font-family: var(--font-family); font-size: 13px; font-weight: 600;
+  color: var(--ob-ink);
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(255,255,255,0.85);
+  border-radius: 9999px;
+  backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: 0 10px 28px rgba(40,50,40,0.16);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -10px);
+  transition: opacity 0.4s ease, transform 0.45s cubic-bezier(.2,.8,.2,1);
+}
+.ob-ready-chip.is-visible { opacity: 1; transform: translate(-50%, 0); }
+.ob-ready-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--ob-sage);
+  animation: ob-ready-pulse 1.6s ease-out infinite;
+}
+@keyframes ob-ready-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(95,143,82,0.55); }
+  70%  { box-shadow: 0 0 0 7px rgba(95,143,82,0); }
+  100% { box-shadow: 0 0 0 0 rgba(95,143,82,0); }
+}
 
 /* ─────────── PC / TABLETTE (≥ 768px) ─────────── */
 @media (min-width: 768px) {

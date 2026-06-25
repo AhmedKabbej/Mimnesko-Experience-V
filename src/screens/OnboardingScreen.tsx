@@ -55,9 +55,9 @@ function Polaroids() {
   )
 }
 
-// ─────────────────── Slides data (vos illustrations) ───────────────────
+// ─────────────────── Slides data (mes illustrations) ───────────────────
 
-const SLIDES: { caption: string; title: ReactNode; body: string; img: string }[] = [
+const SLIDES: { caption: string; title: ReactNode; body: string; img: string; rse?: boolean }[] = [
   {
     caption: "Découvrez l'expérience virale !",
     title: <>Revivre<br />tes souvenirs</>,
@@ -65,10 +65,11 @@ const SLIDES: { caption: string; title: ReactNode; body: string; img: string }[]
     img: '/onboarding/illu1.png',
   },
   {
-    caption: "Découvrez nos actions dans notre rubrique RSE",
+    caption: "Découvrez nos actions dans notre",
     title: <><span className="ob-title-xl">Go</span><br />Green</>,
     body: "La chaleur de notre data center chauffe 6 000 foyers en Suisse.",
     img: '/onboarding/illu2.png',
+    rse: true,
   },
   {
     caption: "Toutes vos photos à un endroit, à portée de main.",
@@ -85,6 +86,10 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const [step, setStep]                     = useState(0)
   const [showInfomaniak, setShowInfomaniak] = useState(false)
   const [showPermission, setShowPermission] = useState(false)
+  const [finalWarm, setFinalWarm]           = useState(false)
+  const [showRSE, setShowRSE]               = useState(false)
+  const [rseWarm, setRseWarm]               = useState(false)
+  const [showReadyChip, setShowReadyChip]   = useState(false)
   const splashRef  = useRef<HTMLDivElement>(null)
   const welcomeRef = useRef<HTMLDivElement>(null)
   const slideRef   = useRef<HTMLDivElement>(null)
@@ -131,6 +136,28 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
     gsap.set(children, { opacity: 0, y: 16 })
     gsap.to(children, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', stagger: 0.09 })
   }, [step])
+
+  // Final : on laisse le sauge s'installer, puis le fond glisse vers l'orange (1,5 s)
+  useEffect(() => {
+    if (step !== FINAL_STEP) { setFinalWarm(false); return }
+    const t = setTimeout(() => setFinalWarm(true), 1500)
+    return () => clearTimeout(t)
+  }, [step, FINAL_STEP])
+
+  // Final : chip « Cloud Mimneskō ready » qui apparaît à l'arrivée puis disparaît
+  useEffect(() => {
+    if (step !== FINAL_STEP) { setShowReadyChip(false); return }
+    setShowReadyChip(true)
+    const t = setTimeout(() => setShowReadyChip(false), 3400)
+    return () => clearTimeout(t)
+  }, [step, FINAL_STEP])
+
+  // Pop-up RSE : le vert glisse vers l'orange (pop-up + fond de la slide ensemble)
+  useEffect(() => {
+    if (!showRSE) { setRseWarm(false); return }
+    const t = setTimeout(() => setRseWarm(true), 450)
+    return () => clearTimeout(t)
+  }, [showRSE])
 
   // Drag des polaroids — PC uniquement (GSAP Draggable)
   useEffect(() => {
@@ -238,7 +265,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
       {/* ── SLIDES (steps 2..N+1) ── */}
       {isSlide && slide && (
-        <div className="ob-slide" ref={slideRef}>
+        <div className={`ob-slide${rseWarm ? ' is-warm' : ''}`} ref={slideRef}>
           <div className="ob-dots ob-anim">
             {SLIDES.map((_, i) => (
               <span key={i} className={`ob-dot${i === slideIndex ? ' ob-dot--active' : ''}`} />
@@ -248,7 +275,17 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
           <div className="ob-card ob-anim">
             <img src={slide.img} alt="" className="ob-illu-img" />
           </div>
-          <p className="ob-caption ob-anim">{slide.caption}</p>
+          <p className="ob-caption ob-anim">
+            {slide.caption}
+            {slide.rse && (
+              <>
+                {' '}
+                <button type="button" className="ob-rse-link" onClick={() => setShowRSE(true)}>
+                  rubrique RSE
+                </button>
+              </>
+            )}
+          </p>
 
           <div className="ob-spacer" />
 
@@ -266,7 +303,12 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
       {/* ── FINAL (step N+2) ── */}
       {step === FINAL_STEP && (
-        <div className="ob-final" ref={finalRef}>
+        <div className={`ob-final${finalWarm ? ' is-warm' : ''}`} ref={finalRef}>
+          <div className={`ob-ready-chip${showReadyChip ? ' is-visible' : ''}`} aria-live="polite">
+            <span className="ob-ready-dot" />
+            Cloud Mimneskō ready
+          </div>
+
           <div className="ob-final-brand ob-anim">
             <span>MIMNESKŌ © 2026</span>
             <span>A POETIC RESISTANCE</span>
@@ -323,6 +365,23 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
             <button className="ob-sheet-cta" onClick={closeInfomaniak}>Compris</button>
           </div>
         </>
+      )}
+
+      {/* ── MINI POP-UP RSE ── */}
+      {showRSE && (
+        <div className="ob-rse-overlay" onClick={() => setShowRSE(false)}>
+          <div className={`ob-rse-pop${rseWarm ? ' is-warm' : ''}`} onClick={(e) => e.stopPropagation()}>
+            <span className="ob-rse-badge">RSE</span>
+            <h3 className="ob-rse-title">Responsabilité Sociétale</h3>
+            <p className="ob-rse-text">
+              Chez Mimneskō, un cloud bas-carbone et éthique : data centers qui chauffent des foyers,
+              énergie 100 % renouvelable, et zéro exploitation de vos données.
+            </p>
+            <button type="button" className="ob-rse-close" onClick={() => setShowRSE(false)}>
+              Compris
+            </button>
+          </div>
+        </div>
       )}
 
       {/* ── PERMISSION ALERT (iOS style) ── */}

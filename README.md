@@ -1,4 +1,25 @@
-# Proto Experience Mimnesko
+# Mimneskō — Proto Experience
+
+Prototype d'expérience web immersive pour **Mimneskō**, un cloud éthique de souvenirs. L'app enchaîne un tunnel d'onboarding, une intro animée, un accueil, une galerie 3D de souvenirs et une expérience 3D scroll-driven (maison + parcours caméra), le tout sur une DA douce et naturelle (sauge → orange).
+
+### Stack
+
+- **React 18** + **TypeScript** + **Vite 6**
+- **Three.js** / **@react-three/fiber** / **@react-three/drei** — rendu 3D, scènes GLB, KTX2
+- **GSAP** — animations (onboarding, menu radial, transitions)
+- **ogl** — effets shader (plasma, gooey search)
+- Déploiement **Vercel** (SPA, voir `vercel.json`)
+
+### Scripts
+
+```bash
+npm run dev      # serveur de dev (Vite)
+npm run build    # tsc -b && vite build → dist/
+npm run preview  # prévisualise le build
+npm run lint     # ESLint
+```
+
+> Docs complémentaires : [`MEMORIES_README.md`](./MEMORIES_README.md) (système de souvenirs) · [`GALLERY_3D_README.md`](./GALLERY_3D_README.md) (galerie 3D). La partie 3D scroll/Three.js est détaillée plus bas.
 
 ---
 
@@ -6,19 +27,39 @@
 
 Chaque écran a son URL : on peut y accéder **directement** (deep-link) sans refaire onboarding → intro → parcours. L'URL se met à jour en naviguant, et les boutons précédent/suivant du navigateur fonctionnent.
 
-| URL | Page | Composant |
-|-----|------|-----------|
-| `/` | Accueil (recherche, plasma) | `HomeCard` |
-| `/galerie` | Galerie 3D des souvenirs | `Memory3D` |
-| `/experience` | Expérience 3D (scène `scene1.glb`) | `ModelViewerScreen` |
-| `/souvenirs` | Mes souvenirs | `MesSouvenirsScreen` |
-| `/balades` | Anciennes balades | `AnciennesBalades` |
-| `/parametres` | Réglages | `SettingsScreen` |
+| URL | Page | Composant | Rôle |
+|-----|------|-----------|------|
+| `/` | Accueil (intro animée + recherche, plasma) | `Intro` + `HomeCard` | Point d'entrée après l'onboarding |
+| `/souvenirs` | Mes souvenirs | `MesSouvenirsScreen` | Collection de souvenirs |
+| `/balades` | Anciennes balades | `AnciennesBalades` | Parcours passés ; lance galerie ou expérience 3D |
+| `/galerie` | Galerie 3D des souvenirs | `Memory3D` | Sélection 3D → ouvre l'expérience |
+| `/experience` | Expérience 3D scroll (scène `scene1.glb` / maison) | `ModelViewerScreen` | Parcours caméra scroll-driven |
+| `/promo` | Vidéo promo de fin de parcours | `VideoPromoScreen` | Final de l'expérience 3D |
+| `/parametres` | Réglages | `SettingsScreen` | Préférences |
+
+**Parcours type :** onboarding (1ʳᵉ visite) → `/` (intro + accueil) → `/galerie` ou `/balades` → `/experience` → `/promo`.
 
 **Notes :**
 - L'onboarding ne s'affiche **qu'une fois** (mémorisé dans `localStorage` → clé `mimnesko_onboarded`). Pour le revoir : `localStorage.removeItem('mimnesko_onboarded')` en console.
 - Retour depuis `/experience` : revient à la page d'origine du lancement (`/`, `/galerie` ou `/balades`).
 - En **production (Vercel)**, `vercel.json` réécrit toutes les routes vers `index.html` pour que recharger une URL profonde (ex. `/souvenirs`) fonctionne.
+
+---
+
+## Navigation in-app — Menu radial
+
+La navigation principale est un **menu radial** (`RadialMenu`) : un bouton flottant qui déploie ses entrées en éventail (GSAP). Positionnement adaptatif — centré en bas sur desktop, coin bas-droite sur mobile (pour ne rien couper hors écran).
+
+Il n'apparaît que sur les écrans de navigation (`intro`, `souvenirs`, `balades`, `settings`) et jamais pendant l'intro animée.
+
+| Entrée | Cible | Icône |
+|--------|-------|-------|
+| Accueil | `/` | `IconHome` |
+| Souvenirs | `/souvenirs` | `IconPhoto` |
+| Balades | `/balades` | `IconRoute` |
+| Paramètres | `/parametres` | `IconGear` |
+
+> Les écrans `/galerie`, `/experience` et `/promo` n'ont pas d'entrée dans le menu : on y entre par action (lancer une balade / l'expérience) et on en sort via leur bouton retour dédié.
 
 ---
 
