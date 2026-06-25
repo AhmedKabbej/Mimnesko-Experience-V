@@ -149,7 +149,7 @@ function Scene({
   const prevProgress = useRef(0)
   const velocity = useRef(0)
 
-  // Free-look : orientation de la caméra contrôlée à la souris.
+  // Free-look : orientation de la caméra contrôlée au glisser de la souris.
   const yaw = useRef(0)
   const pitch = useRef(0)
   const dragging = useRef(false)
@@ -307,6 +307,7 @@ export default function ModelViewerScreen({ onBack, onFinish }: ModelViewerScree
   const [closing, setClosing] = useState(false)
   const [ready, setReady] = useState(false)
   const [atEnd, setAtEnd] = useState(false)
+  const [showHints, setShowHints] = useState(true)
   const mountTime = useRef(performance.now())
 
   // Contenus éditables (texte + image) — restaurés depuis le stockage local.
@@ -350,6 +351,13 @@ export default function ModelViewerScreen({ onBack, onFinish }: ModelViewerScree
     return stopAmbient
   }, [])
 
+  // Indications : on les laisse ~10 s à l'arrivée si l'utilisateur n'a pas encore scrollé.
+  useEffect(() => {
+    if (!ready) return
+    const id = setTimeout(() => setShowHints(false), 10000)
+    return () => clearTimeout(id)
+  }, [ready])
+
   // Écran calme de fin : on laisse un temps de recueillement avant de revenir.
   useEffect(() => {
     if (!closing) return
@@ -364,6 +372,7 @@ export default function ModelViewerScreen({ onBack, onFinish }: ModelViewerScree
       e.preventDefault()
       progressRef.current = Math.min(Math.max(progressRef.current + e.deltaY / 3000, 0), 1)
       snapTargetRef.current = null
+      setShowHints(false)
     }
 
     const onTouchStart = (e: TouchEvent) => {
@@ -375,6 +384,7 @@ export default function ModelViewerScreen({ onBack, onFinish }: ModelViewerScree
       lastTouchY = e.touches[0].clientY
       progressRef.current = Math.min(Math.max(progressRef.current + dy / 1000, 0), 1)
       snapTargetRef.current = null
+      setShowHints(false)
     }
 
     window.addEventListener('wheel', onWheel, { passive: false })
@@ -429,6 +439,26 @@ export default function ModelViewerScreen({ onBack, onFinish }: ModelViewerScree
       {!ready && <LoadingOverlay />}
 
       <BackButton onClick={() => setClosing(true)} />
+
+      {ready && !closing && showHints && (
+        <div className="mvs-hints">
+          <div className="mvs-hint mvs-hint--scroll">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <rect x="8" y="3" width="8" height="14" rx="4" stroke="currentColor" strokeWidth="1.6" />
+              <line x1="12" y1="6.5" x2="12" y2="9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              <path d="M9.5 19.5l2.5 2.5 2.5-2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span>Faites défiler pour avancer</span>
+          </div>
+          <span className="mvs-hint-sep" />
+          <div className="mvs-hint">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M5 3l5.5 17 2.2-7.3L20 10.5 5 3z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+            </svg>
+            <span>Cliquez-glissez pour regarder autour</span>
+          </div>
+        </div>
+      )}
 
       {onFinish && atEnd && !closing && (
         <button className="mvs-finish-btn" onClick={onFinish}>

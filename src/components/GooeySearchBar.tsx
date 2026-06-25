@@ -21,6 +21,11 @@ export default function GooeySearchBar({ onSelectFilter, onStart, onOpenChange }
 
   const showStart = open && value.trim().length > 0
 
+  // Son joué à l'ouverture de la barre de recherche.
+  const playRetour = () => {
+    try { new Audio('/mp3/retour.MP3').play().catch(() => {}) } catch { /* audio non bloquant */ }
+  }
+
   // Notifie le parent (pour basculer le fond plasma).
   useEffect(() => { onOpenChange?.(open) }, [open, onOpenChange])
 
@@ -100,12 +105,12 @@ export default function GooeySearchBar({ onSelectFilter, onStart, onOpenChange }
       <div
         className="msearch-bar"
         ref={barRef}
-        onClick={() => { if (!open) setOpen(true) }}
+        onClick={() => { if (!open) { playRetour(); setOpen(true) } }}
       >
         <div className="msearch-fill" ref={fillRef} />
         <button
           className="msearch-icon-btn"
-          onClick={(e) => { e.stopPropagation(); setOpen((o) => !o) }}
+          onClick={(e) => { e.stopPropagation(); if (!open) playRetour(); setOpen((o) => !o) }}
           aria-label={open ? 'Fermer la recherche' : 'Ouvrir la recherche'}
         >
           <span className="msearch-icon" ref={iconRef}>
@@ -133,7 +138,11 @@ export default function GooeySearchBar({ onSelectFilter, onStart, onOpenChange }
             <button
               key={d}
               className="msearch-date-chip"
-              onClick={() => onSelectFilter?.(d)}
+              onClick={() => {
+                setValue(d)               // écrit le contenu du badge dans la barre
+                onSelectFilter?.(d)
+                inputRef.current?.focus()
+              }}
             >
               {d}
             </button>

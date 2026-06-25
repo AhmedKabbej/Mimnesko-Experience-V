@@ -92,19 +92,6 @@
 }
 .ob-final.is-warm::after { opacity: 1; }
 
-/* Slide : même couche orange, révélée quand la pop-up RSE réchauffe la scène */
-.ob-slide::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--ob-bg-orange);
-  opacity: 0;
-  transition: opacity 1.2s ease;
-  pointer-events: none;
-}
-.ob-slide.is-warm::after { opacity: 1; }
-
 /* Accents qui se réchauffent en même temps que le fond */
 .ob-final .ob-check-circle,
 .ob-final.is-warm .ob-check-circle { transition: background 1.2s ease, box-shadow 1.2s ease; }
@@ -361,6 +348,12 @@
 .ob-dot--active { background: var(--ob-ink); transform: scale(1.15); }
 
 .ob-card {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+  font: inherit;
+  display: block;
+  cursor: zoom-in; /* la photo est cliquable → plein écran */
   width: 100%;
   max-width: 360px;
   aspect-ratio: 1 / 0.94;
@@ -630,9 +623,7 @@
   text-align: center;
   box-shadow: 0 -18px 50px rgba(30,50,30,0.3);
   animation: ob-rse-up 0.42s cubic-bezier(.2,.9,.3,1.05);
-  transition: border-color 1.2s ease;
 }
-.ob-rse-pop.is-warm { border-top-color: rgba(255,122,32,0.4); }
 @keyframes ob-rse-up {
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }
@@ -646,8 +637,6 @@
   margin: 0 auto 16px;
 }
 .ob-rse-badge {
-  position: relative;
-  isolation: isolate; /* contient la couche orange (z-index:-1) sous le texte « RSE » */
   display: inline-block;
   font-family: var(--font-family);
   font-size: 12px; font-weight: 800; letter-spacing: 0.12em;
@@ -655,20 +644,7 @@
   background: linear-gradient(160deg, var(--ob-sage-light), var(--ob-sage));
   padding: 5px 12px; border-radius: 9999px; margin-bottom: 12px;
   box-shadow: 0 6px 16px rgba(95,143,82,0.32);
-  transition: box-shadow 1.2s ease;
 }
-/* Couche orange révélée en fondu (les dégradés ne s'animent pas → on crossfade l'opacité,
-   exactement comme le fond → vert et orange transitionnent ensemble) */
-.ob-rse-badge::after {
-  content: "";
-  position: absolute; inset: 0; z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(160deg, var(--ob-orange-light), var(--ob-orange));
-  opacity: 0;
-  transition: opacity 1.2s ease;
-}
-.ob-rse-pop.is-warm .ob-rse-badge { box-shadow: 0 6px 16px rgba(255,122,32,0.36); }
-.ob-rse-pop.is-warm .ob-rse-badge::after { opacity: 1; }
 .ob-rse-title {
   font-family: var(--font-title);
   font-size: 21px; font-weight: 800; letter-spacing: -0.4px;
@@ -686,6 +662,52 @@
   box-shadow: 0 10px 24px rgba(0,0,0,0.2);
 }
 .ob-rse-close:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,0,0,0.26); }
+
+/* ─────────── LIGHTBOX (photo plein écran) ─────────── */
+.ob-lightbox {
+  position: absolute; inset: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: center;
+  padding: 6vmin;
+  background: rgba(10,12,14,0.82);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  cursor: zoom-out;
+  animation: ob-lb-fade 0.25s ease;
+}
+@keyframes ob-lb-fade { from { opacity: 0; } to { opacity: 1; } }
+.ob-lightbox-img {
+  max-width: min(94vw, 760px);
+  max-height: 86vh;
+  width: auto; height: auto;
+  object-fit: contain;
+  border-radius: 18px;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.55);
+  cursor: zoom-in;
+  transform: scale(1);
+  transition: transform 0.45s cubic-bezier(.2,.8,.2,1);
+  animation: ob-lb-pop 0.38s cubic-bezier(.2,.9,.3,1.1);
+}
+/* même effet hover que les cartes : on zoome un peu l'image */
+.ob-lightbox-img:hover { transform: scale(1.08); }
+@keyframes ob-lb-pop {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.ob-lightbox-close {
+  position: absolute;
+  top: calc(max(env(safe-area-inset-top, 0px), 14px) + 4px);
+  right: 18px;
+  width: 42px; height: 42px; border-radius: 50%;
+  border: none; cursor: pointer;
+  background: rgba(255,255,255,0.16); color: #fff;
+  font-size: 26px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.ob-lightbox-close:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
+@media (prefers-reduced-motion: reduce) {
+  .ob-lightbox-img:hover { transform: scale(1); }
+}
 
 /* ─────────── CHIP « Cloud Mimneskō ready » (final) ─────────── */
 .ob-ready-chip {
@@ -712,12 +734,23 @@
 .ob-ready-dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--ob-sage);
+  /* la partie verte vire à l'orange en même temps que le fond du final (1,2 s) */
+  transition: background 1.2s ease;
   animation: ob-ready-pulse 1.6s ease-out infinite;
+}
+.ob-final.is-warm .ob-ready-dot {
+  background: var(--ob-orange);
+  animation-name: ob-ready-pulse-warm;
 }
 @keyframes ob-ready-pulse {
   0%   { box-shadow: 0 0 0 0 rgba(95,143,82,0.55); }
   70%  { box-shadow: 0 0 0 7px rgba(95,143,82,0); }
   100% { box-shadow: 0 0 0 0 rgba(95,143,82,0); }
+}
+@keyframes ob-ready-pulse-warm {
+  0%   { box-shadow: 0 0 0 0 rgba(255,122,32,0.55); }
+  70%  { box-shadow: 0 0 0 7px rgba(255,122,32,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,122,32,0); }
 }
 
 /* ─────────── PC / TABLETTE (≥ 768px) ─────────── */
@@ -734,8 +767,7 @@
   .ob-splash-logo { font-size: 76px; }
   .ob-splash-sub  { font-size: 22px; }
 
-  .ob-slide-title, .ob-final-title { font-size: 54px; }
-  .ob-card { max-width: 400px; }
+  .ob-final-title { font-size: 54px; }
 
   /* Final : le fond prend tout l'écran (le contenu reste centré) */
   .ob-final {
@@ -773,13 +805,13 @@
   .ob-polaroid--3 { bottom: 9%; right: 6%; left: auto;  top: auto;    --rot: 7deg; }
   .ob-polaroid--4 { bottom: 9%; left: 6%;  right: auto; top: auto;    --rot: -7deg; }
 
-  /* Slides : image à gauche, texte à droite */
+  /* Slides : image à gauche, texte à droite — plus grand, on profite de la place PC */
   .ob-slide {
-    max-width: 1040px;
+    max-width: 1320px;
     display: grid;
     align-content: center;
-    column-gap: clamp(40px, 5vw, 76px);
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(56px, 6vw, 104px);
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     grid-template-areas:
       "card dots"
       "card caption"
@@ -787,27 +819,51 @@
       "card body"
       "card actions";
     text-align: left;
-    padding-left: 6vw;
-    padding-right: 6vw;
+    padding-left: 5vw;
+    padding-right: 5vw;
   }
   .ob-card {
     grid-area: card;
     align-self: center;
     width: 100%;
-    max-width: 480px;
+    max-width: 580px;
     margin: 0 auto;
   }
-  .ob-dots    { grid-area: dots; justify-content: flex-start; padding: 0 0 16px; }
-  .ob-caption { grid-area: caption; text-align: left; margin: 0 0 10px; }
+  .ob-dots    { grid-area: dots; justify-content: flex-start; padding: 0 0 18px; }
+  .ob-caption { grid-area: caption; text-align: left; font-size: 18px; margin: 0 0 12px; }
   .ob-spacer  { display: none; }
-  .ob-slide-title { grid-area: title; text-align: left; margin: 0 0 16px; }
-  .ob-slide-body  { grid-area: body; text-align: left; max-width: 440px; margin: 0; }
-  .ob-actions { grid-area: actions; align-items: flex-start; margin-top: 30px; }
+  .ob-slide-title {
+    grid-area: title; text-align: left; margin: 0 0 18px;
+    font-size: clamp(58px, 5.4vw, 82px);
+    line-height: 0.96;
+    letter-spacing: -2px;
+  }
+  .ob-slide-body  {
+    grid-area: body; text-align: left; margin: 0;
+    font-size: 23px; line-height: 1.32; max-width: 500px;
+  }
+  .ob-actions { grid-area: actions; align-items: flex-start; margin-top: 34px; }
 
   .ob-sheet {
     bottom: auto; top: 50%; left: 50%; right: auto;
     transform: translate(-50%, -50%);
     width: 460px; border-radius: 24px; max-height: 90vh; overflow-y: auto;
+  }
+}
+
+/* ─────────── PC : survol de l'image → elle s'agrandit encore plus ─────────── */
+@media (min-width: 768px) and (hover: hover) {
+  .ob-card {
+    cursor: zoom-in;
+    transition: transform 0.5s cubic-bezier(.2,.8,.2,1), box-shadow 0.5s ease;
+  }
+  .ob-card:hover {
+    transform: scale(1.07);
+    z-index: 2;
+    box-shadow:
+      0 0 0 1px rgba(40,46,54,0.24),
+      inset 0 0 0 1px rgba(30,34,40,0.3),
+      0 36px 72px rgba(30,40,30,0.26);
   }
 }
 

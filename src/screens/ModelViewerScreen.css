@@ -366,6 +366,72 @@
   background: #ffc149;
 }
 
+/* ── Indications de contrôle (bas de l'expérience) ── */
+.mvs-hints {
+  position: fixed;
+  left: 50%;
+  bottom: 34px;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  max-width: calc(100vw - 32px);
+  border-radius: 999px;
+  background: rgba(15, 10, 5, 0.55);
+  border: 1px solid rgba(255, 200, 80, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.4);
+  animation: mvs-hints-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* sortie en fondu quand React le retire : on s'appuie sur l'entrée seulement,
+   le démontage est instantané — l'opacité d'entrée suffit visuellement. */
+.mvs-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 2px 8px;
+  color: rgba(255, 240, 210, 0.9);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.mvs-hint svg { color: rgba(255, 200, 80, 0.95); flex-shrink: 0; }
+
+.mvs-hint--scroll svg { animation: mvs-hint-bob 1.8s ease-in-out infinite; }
+
+.mvs-hint-sep {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 220, 170, 0.22);
+  flex-shrink: 0;
+}
+
+@keyframes mvs-hints-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(14px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes mvs-hint-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(3px); }
+}
+
+@media (max-width: 560px) {
+  .mvs-hints { flex-direction: column; gap: 4px; border-radius: 18px; padding: 12px 18px; }
+  .mvs-hint-sep { width: 60%; height: 1px; }
+  .mvs-hint { font-size: 12.5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mvs-hint--scroll svg { animation: none; }
+}
+
 /* ── Bouton de fin de parcours → séquence vidéo ── */
 .mvs-finish-btn {
   position: fixed;

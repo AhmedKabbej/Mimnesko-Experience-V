@@ -44,6 +44,24 @@ export default function RadialMenu({ active, onNavigate }: RadialMenuProps) {
   const dotRef    = useRef<HTMLButtonElement>(null)
   const itemRefs  = useRef<(HTMLButtonElement | null)[]>([])
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([])
+  const audioRef  = useRef<HTMLAudioElement | null>(null)
+
+  // Son du menu : boucle tant que le menu est ouvert, s'arrête à la fermeture.
+  useEffect(() => {
+    if (isOpen) {
+      if (!audioRef.current) {
+        audioRef.current = new Audio('/mp3/menuLoop.MP3')
+        audioRef.current.loop = true
+      }
+      audioRef.current.currentTime = 0
+      audioRef.current.play().catch(() => { /* audio non bloquant */ })
+    } else {
+      audioRef.current?.pause()
+    }
+  }, [isOpen])
+
+  // Coupe le son si le menu est démonté (changement d'écran).
+  useEffect(() => () => { audioRef.current?.pause(); audioRef.current = null }, [])
 
   const ITEMS = useMemo(() => buildItems(isMobile), [isMobile])
 

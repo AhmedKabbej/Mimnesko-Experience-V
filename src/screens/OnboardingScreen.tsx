@@ -88,8 +88,8 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const [showPermission, setShowPermission] = useState(false)
   const [finalWarm, setFinalWarm]           = useState(false)
   const [showRSE, setShowRSE]               = useState(false)
-  const [rseWarm, setRseWarm]               = useState(false)
   const [showReadyChip, setShowReadyChip]   = useState(false)
+  const [lightbox, setLightbox]             = useState<string | null>(null)
   const splashRef  = useRef<HTMLDivElement>(null)
   const welcomeRef = useRef<HTMLDivElement>(null)
   const slideRef   = useRef<HTMLDivElement>(null)
@@ -144,6 +144,14 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
     return () => clearTimeout(t)
   }, [step, FINAL_STEP])
 
+  // Lightbox : fermeture à la touche Échap
+  useEffect(() => {
+    if (!lightbox) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightbox(null) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [lightbox])
+
   // Final : chip « Cloud Mimneskō ready » qui apparaît à l'arrivée puis disparaît
   useEffect(() => {
     if (step !== FINAL_STEP) { setShowReadyChip(false); return }
@@ -151,13 +159,6 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
     const t = setTimeout(() => setShowReadyChip(false), 3400)
     return () => clearTimeout(t)
   }, [step, FINAL_STEP])
-
-  // Pop-up RSE : le vert glisse vers l'orange (pop-up + fond de la slide ensemble)
-  useEffect(() => {
-    if (!showRSE) { setRseWarm(false); return }
-    const t = setTimeout(() => setRseWarm(true), 450)
-    return () => clearTimeout(t)
-  }, [showRSE])
 
   // Drag des polaroids — PC uniquement (GSAP Draggable)
   useEffect(() => {
@@ -208,6 +209,10 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   }, [currentEl])
 
   const next = () => {
+    // Sur « Éthique & Sécurisé » (dernière slide), le clic « Continuer » joue le son serveur.
+    if (step === LAST_SLIDE) {
+      try { new Audio('/mp3/serverload.MP3').play().catch(() => {}) } catch { /* audio non bloquant */ }
+    }
     if (step < FINAL_STEP) goToStep(step + 1, 1)
     else onComplete()
   }
@@ -265,16 +270,21 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
       {/* ── SLIDES (steps 2..N+1) ── */}
       {isSlide && slide && (
-        <div className={`ob-slide${rseWarm ? ' is-warm' : ''}`} ref={slideRef}>
+        <div className="ob-slide" ref={slideRef}>
           <div className="ob-dots ob-anim">
             {SLIDES.map((_, i) => (
               <span key={i} className={`ob-dot${i === slideIndex ? ' ob-dot--active' : ''}`} />
             ))}
           </div>
 
-          <div className="ob-card ob-anim">
+          <button
+            type="button"
+            className="ob-card ob-anim"
+            onClick={() => setLightbox(slide.img)}
+            aria-label="Agrandir l'image"
+          >
             <img src={slide.img} alt="" className="ob-illu-img" />
-          </div>
+          </button>
           <p className="ob-caption ob-anim">
             {slide.caption}
             {slide.rse && (
@@ -370,7 +380,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
       {/* ── MINI POP-UP RSE ── */}
       {showRSE && (
         <div className="ob-rse-overlay" onClick={() => setShowRSE(false)}>
-          <div className={`ob-rse-pop${rseWarm ? ' is-warm' : ''}`} onClick={(e) => e.stopPropagation()}>
+          <div className="ob-rse-pop" onClick={(e) => e.stopPropagation()}>
             <span className="ob-rse-badge">RSE</span>
             <h3 className="ob-rse-title">Responsabilité Sociétale</h3>
             <p className="ob-rse-text">
@@ -381,6 +391,21 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
               Compris
             </button>
           </div>
+        </div>
+      )}
+
+      {/* ── LIGHTBOX (photo plein écran) ── */}
+      {lightbox && (
+        <div className="ob-lightbox" onClick={() => setLightbox(null)}>
+          <button type="button" className="ob-lightbox-close" aria-label="Fermer" onClick={() => setLightbox(null)}>
+            ×
+          </button>
+          <img
+            src={lightbox}
+            alt=""
+            className="ob-lightbox-img"
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
 
