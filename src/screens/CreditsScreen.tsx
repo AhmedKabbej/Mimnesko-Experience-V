@@ -8,12 +8,12 @@ interface CreditsScreenProps {
 
 const OUTILS = [
   'Miro', 'Notion', 'Figma', 'VS Code', 'After Effects',
-  'Adobe Illustrator', 'Photoshop', 'Media Encoder',
+  'Adobe Illustrator', 'Photoshop', 'Media Encoder', 'Blender 3D',
 ]
 
 const TECHNOS = [
   'WebGL', 'Three.js', 'React Three Fiber', 'HTML', 'CSS', 'JavaScript',
-  'TypeScript', 'React', 'Blender 3D', 'Path JSON', 'GSAP',
+  'TypeScript', 'React', 'Path JSON', 'GSAP',
 ]
 
 const FILMS = [
@@ -37,28 +37,24 @@ const BUDGET = [
 ]
 
 const TRADES = [
-  { title: 'UX Research',       items: ['Études utilisateurs (interviews, tests…)', 'Benchmark Cloud', 'Travail émotionnel', 'Synthèse, persona, parcours'] },
-  { title: 'DA (Dir. Art.)',    items: ['Concept visuel', "Design d'interface immersive", 'Design System', 'Prototypage (Figma, interactif)'] },
-  { title: 'Creative Dev / 3D', items: ['3D assets + environnements', 'Spatialisation des souvenirs', 'Scrollytelling avancé', 'Motion design', 'Optimisation performances'] },
-  { title: 'Dev Web',           items: ['Intégration technique', 'Responsive / Mobile', 'Gestion des médias (upload)', 'Compatibilités navigateurs'] },
-  { title: 'Cloud éthique',     items: ['Setup cloud perso souverain', 'Installation hébergements', 'Test sécurité & accessibilité', 'Audit infrastructure éthique'] },
-  { title: 'Sound Design',      items: ['Ambiance sonore immersive', 'Intégration audio interactive', 'Narration & Soundscapes'] },
-  { title: 'Test utilisateurs', items: ['Tests réels (cibles 18–30 ans)', 'UX simplifiée pour installation', 'Ajustements UX émotion', 'Debug & amélioration'] },
-  { title: 'Déploiement',       items: ['Mise en ligne finale', 'Optimisation finale', 'Vérification SEO & Analytics'] },
+  { title: 'UX Research',       items: ['Études, benchmark & travail émotionnel', 'Personas & parcours'] },
+  { title: 'DA (Dir. Art.)',    items: ['Concept visuel & UI immersive', 'Design System & prototypage'] },
+  { title: 'Creative Dev / 3D', items: ['3D, environnements & scrollytelling', 'Motion & optimisation des perfs'] },
+  { title: 'Dev Web',           items: ['Intégration & responsive', 'Médias, upload & compatibilités'] },
+  { title: 'Cloud éthique',     items: ['Cloud souverain & hébergement', 'Sécurité, accessibilité & audit'] },
+  { title: 'Sound Design',      items: ['Ambiance sonore immersive', 'Audio interactif & narration'] },
+  { title: 'Test utilisateurs', items: ['Tests réels (18–30 ans)', 'Ajustements UX & debug'] },
+  { title: 'Déploiement',       items: ['Mise en ligne & optimisation', 'SEO & Analytics'] },
 ]
 
 const CHECKLIST = [
-  { title: '1 · Assets visuels',                items: ['Modèles 3D (low-poly / high-poly)', 'Textures (PBR, procédurales, organique, métal, verre…)', 'Shaders (distorsion, glitch, liquide, holographique)', 'Backgrounds (fixes ou animés)', 'Particules (systèmes dynamiques)', 'Éclairage (HDRI, lumières dynamiques)'] },
-  { title: '2 · Design system (UI)',            items: ['Boutons (plusieurs variantes)', 'Navigation (menu, navbar, 3D / flottante)', 'Cards / blocs de contenu', 'Modals / overlays', 'Tooltips', 'Sliders / contrôles', 'Inputs', 'Loaders / états de chargement'] },
-  { title: '3 · États & interactions',          items: ['Hover states (important en 3D)', 'Active / click states', 'Focus states (accessibilité)', 'Transitions entre composants', 'Micro-interactions (feedback)', 'États désactivés / erreurs'] },
-  { title: '4 · Architecture 3D',               items: ['Scène principale (hero)', 'Scènes secondaires / sections', 'Objets interactifs', 'Caméra (positions, transitions, contraintes)', "Points d'intérêt (zones interactives)"] },
-  { title: '5 · Animation & motion',            items: ["Animations d'introduction", 'Animations au scroll', "Boucles d'animation (idle)", 'Transitions entre scènes', 'Timeline globale (synchronisation)'] },
-  { title: '6 · Typographie',                   items: ['Choix de fonts (web + expérimentales)', 'Hiérarchie typographique', 'Texte animé', 'Texte intégré en 3D (extrusion, déformation)'] },
-  { title: '7 · Navigation & UX',               items: ['Structure de navigation (linéaire / exploratoire)', 'Indicateurs visuels (où cliquer, où aller)', 'Curseur personnalisé', 'Feedback visuel clair'] },
-  { title: '8 · Sound design',                  items: ["Sons d'interaction (bouton)", 'Ambiance sonore', 'Feedback audio subtil'] },
-  { title: '9 · Performance & technique',       items: ['Optimisation des meshes', 'Compression des textures', 'Lazy loading', 'Fallback (sans WebGL)', 'Adaptation mobile'] },
-  { title: '10 · Direction artistique',         items: ['Palette de couleurs', 'Références visuelles', 'Cohérence globale (UI + 3D)', 'Moodboard', 'Intention émotionnelle'] },
-  { title: '11 · Avancé (optionnel)',           items: ['Interaction webcam / gyroscope', 'Génération procédurale', 'Data visualisation en 3D', 'Narration interactive'] },
+  { title: 'Assets visuels',           items: ['Modèles 3D, textures PBR & shaders', 'Particules, HDRI & éclairage'] },
+  { title: 'Design system (UI)',       items: ['Boutons, navigation, cards, modals', 'Inputs, sliders, tooltips & loaders'] },
+  { title: 'États & interactions',     items: ['Hover / active / focus', 'Micro-interactions & transitions'] },
+  { title: 'Architecture & motion 3D', items: ['Scènes, caméra & objets interactifs', 'Animations au scroll & timeline'] },
+  { title: 'Typographie & navigation', items: ['Hiérarchie & texte intégré en 3D', 'Curseur custom & feedback visuel'] },
+  { title: 'Son, perfs & DA',          items: ['Sound design & feedback audio', 'Optimisation, mobile & fallback', 'Palette, moodboard & intention'] },
+  { title: 'Avancé',                   items: ['Webcam / gyroscope & génération procédurale', 'Dataviz 3D & narration interactive'] },
 ]
 
 // Générique de fin façon cinéma : fond noir, défilement vertical, DA orange & blanche.
@@ -123,7 +119,7 @@ export default function CreditsScreen({ onBack }: CreditsScreenProps) {
       <div className="credits-roll">
         {/* En-tête */}
         <h1 className="credits-logo">Mimneskō</h1>
-        <p className="credits-tagline">A Poetic Resistance</p>
+        <p className="credits-tagline">Une résistance poétique</p>
 
         <div className="credits-rule" />
 
@@ -293,7 +289,8 @@ export default function CreditsScreen({ onBack }: CreditsScreenProps) {
         <p className="credits-label">Remerciements</p>
         <ul className="credits-thanks">
           <li>Ahcene Oumedah</li>
-          <li>Tess Valen </li>
+          <li>Nolhan Pieroni</li>
+          <li>Tess Valen</li>
         </ul>
 
         <div className="credits-rule" />
@@ -303,8 +300,12 @@ export default function CreditsScreen({ onBack }: CreditsScreenProps) {
         <ul className="credits-thanks">
           <li>Thomas Adam-Garnung</li>
           <li>Christian Porri</li>
+          <li>Rachel Donnat</li>
           <li>Alexis Séjourné</li>
           <li>Vincent Caruso</li>
+          <li>Julien Demeuzois</li>
+          <li>Arnaud Lacaze</li>
+          <li>Thierry Colcy</li>
         </ul>
 
         <div className="credits-rule" />
@@ -338,6 +339,7 @@ export default function CreditsScreen({ onBack }: CreditsScreenProps) {
 
         <div className="credits-rule" />
 
+        <p className="credits-label">Important !</p>
         <p className="credits-disclaimer">
           Mimneskō a pour vocation de promouvoir <strong>Infomaniak</strong> plutôt que
           la communication des GAFAM. Ce projet n'est qu'une démonstration — une idée
