@@ -20,6 +20,7 @@ interface Souvenir {
   date: string
   starred: boolean
   synced: boolean
+  imageUrl?: string
 }
 
 const SOUVENIRS: Souvenir[] = [
@@ -36,16 +37,20 @@ const SOUVENIRS: Souvenir[] = [
 export default function MesSouvenirsScreen({ onBack }: MesSouvenirsScreenProps) {
   const [activeFilter, setActiveFilter] = useState<'tous' | 'favoris'>('tous')
   const [query, setQuery]               = useState('')
+  const [souvenirs, setSouvenirs]       = useState<Souvenir[]>(SOUVENIRS)
   const [starred, setStarred]           = useState<Set<number>>(
     new Set(SOUVENIRS.filter(s => s.starred).map(s => s.id))
   )
   const [modalOpen, setModalOpen]       = useState(false)
   const [isDragging, setIsDragging]     = useState(false)
   const [photos, setPhotos]             = useState<UploadedPhoto[]>([])
+  const [showSuccess, setShowSuccess]   = useState(false)
+  const [newCardId, setNewCardId]       = useState<number | null>(null)
   const screenRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const displayed = SOUVENIRS.filter(s => {
+  const displayed = souvenirs.filter(s => {
     if (activeFilter === 'favoris' && !starred.has(s.id)) return false
     if (query && !s.title.toLowerCase().includes(query.toLowerCase())) return false
     return true
@@ -96,13 +101,60 @@ export default function MesSouvenirsScreen({ onBack }: MesSouvenirsScreenProps) 
     setModalOpen(false)
   }
 
+  // ── Enregistrer le souvenir : crée une carte + badge succès ──
+  const handleSave = () => {
+    if (photos.length === 0) return
+
+    const cover = photos[0]
+    // On garde l'URL de la photo de couverture pour la carte, on libère les autres
+    photos.slice(1).forEach(p => URL.revokeObjectURL(p.url))
+
+    const date = new Date().toLocaleDateString('fr-FR', {
+      day: 'numeric', month: 'short', year: 'numeric',
+    })
+    const newSouvenir: Souvenir = {
+      id: Date.now(),
+      title: 'Nouveau souvenir',
+      date,
+      starred: false,
+      synced: true,
+      imageUrl: cover.url,
+    }
+
+    setSouvenirs(prev => [newSouvenir, ...prev])
+    setNewCardId(newSouvenir.id)
+    setPhotos([])
+    setModalOpen(false)
+    setIsDragging(false)
+
+    // Badge « Cloud Mimneskō ready »
+    setShowSuccess(true)
+    if (successTimer.current) clearTimeout(successTimer.current)
+    successTimer.current = setTimeout(() => setShowSuccess(false), 3400)
+  }
+
   // Revoke object URLs on unmount to avoid memory leaks
   useEffect(() => {
     return () => {
       photos.forEach(p => URL.revokeObjectURL(p.url))
+      if (successTimer.current) clearTimeout(successTimer.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Animate the freshly added card in
+  useEffect(() => {
+    if (newCardId == null) return
+    const el = screenRef.current?.querySelector(`.ms-card[data-id="${newCardId}"]`)
+    if (el) {
+      gsap.from(el, {
+        opacity: 0, y: 26, scale: 0.9,
+        duration: 0.55, ease: 'back.out(1.6)',
+        clearProps: 'all',
+      })
+    }
+    setNewCardId(null)
+  }, [newCardId])
 
   // ── Entrance animation ──
   useEffect(() => {
@@ -195,6 +247,12 @@ export default function MesSouvenirsScreen({ onBack }: MesSouvenirsScreenProps) 
   return (
     <div className="ms-screen" ref={screenRef}>
 
+      {/* Badge succès « Cloud Mimneskō ready » */}
+      <div className={`ms-success-chip${showSuccess ? ' is-visible' : ''}`} aria-live="polite">
+        <span className="ms-success-dot" />
+        Souvenir enregistré · Cloud Mimneskō ready
+      </div>
+
       {/* Header */}
       <div className="ms-header">
         <button className="ms-icon-btn" onClick={onBack} aria-label="Retour">
@@ -259,6 +317,7 @@ export default function MesSouvenirsScreen({ onBack }: MesSouvenirsScreenProps) 
         {displayed.map(souvenir => (
           <div
             key={souvenir.id}
+            data-id={souvenir.id}
             className="ms-card"
             onMouseEnter={handleCardEnter}
             onMouseLeave={handleCardLeave}
@@ -274,11 +333,15 @@ export default function MesSouvenirsScreen({ onBack }: MesSouvenirsScreenProps) 
               >
                 <IconStar size={15} filled={starred.has(souvenir.id)} />
               </button>
-              <svg className="ms-card-placeholder" viewBox="0 0 48 48" fill="none">
-                <rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" strokeWidth="2"/>
-                <circle cx="18" cy="20" r="4" stroke="currentColor" strokeWidth="2"/>
-                <path d="M6 34l10-10 8 8 6-6 12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              {souvenir.imageUrl ? (
+                <img className="ms-card-photo" src={souvenir.imageUrl} alt={souvenir.title} />
+              ) : (
+                <svg className="ms-card-placeholder" viewBox="0 0 48 48" fill="none">
+                  <rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" strokeWidth="2"/>
+                  <circle cx="18" cy="20" r="4" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M6 34l10-10 8 8 6-6 12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
             </div>
             <div className="ms-card-caption">
               <span className="ms-card-title">{souvenir.title}</span>
@@ -375,7 +438,7 @@ export default function MesSouvenirsScreen({ onBack }: MesSouvenirsScreenProps) 
             <button
               className="ms-modal-submit"
               disabled={photos.length === 0}
-              onClick={closeModal}
+              onClick={handleSave}
             >
               Enregistrer le souvenir
             </button>

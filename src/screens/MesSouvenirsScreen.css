@@ -239,6 +239,15 @@
   color: rgba(0,0,0,0.25);
 }
 
+.ms-card-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .ms-card-caption {
   padding: 8px 10px 10px;
   background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 100%);
@@ -600,4 +609,47 @@
   .ms-grid {
     grid-template-columns: repeat(5, 1fr);
   }
+}
+
+/* ── Badge succès « Cloud Mimneskō ready » ── */
+.ms-success-chip {
+  position: fixed;
+  top: max(env(safe-area-inset-top, 0px), 14px);
+  left: 50%;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  white-space: nowrap;
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-dark);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 9999px;
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: 0 10px 28px rgba(40, 50, 40, 0.18);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -14px);
+  transition: opacity 0.4s ease, transform 0.45s cubic-bezier(.2, .8, .2, 1);
+}
+.ms-success-chip.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.ms-success-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FF6A00;
+  animation: ms-success-pulse 1.6s ease-out infinite;
+}
+@keyframes ms-success-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 122, 32, 0.55); }
+  70%  { box-shadow: 0 0 0 7px rgba(255, 122, 32, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 122, 32, 0); }
 }

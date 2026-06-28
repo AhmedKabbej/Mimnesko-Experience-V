@@ -13,6 +13,8 @@ import './SettingsScreen.css'
 
 interface SettingsScreenProps {
   onBack: () => void
+  /** Reboucle l'expérience vers l'onboarding (déclenché depuis les crédits). */
+  onRestart: () => void
 }
 
 type SectionId = 'stockage' | 'confidentialite' | 'notifications' | 'gestion' | 'apropos'
@@ -38,7 +40,7 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
   )
 }
 
-export default function SettingsScreen({ onBack }: SettingsScreenProps) {
+export default function SettingsScreen({ onBack, onRestart }: SettingsScreenProps) {
   const [activeSection, setActiveSection] = useState<SectionId>('stockage')
   const [cloudStorage, setCloudStorage]             = useState(true)
   const [provider, setProvider]                     = useState<'mimnesko' | 'infomaniak'>('mimnesko')
@@ -53,7 +55,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
     return <RgpdScreen onBack={() => setShowRgpd(false)} />
   }
   if (showCredits) {
-    return <CreditsScreen onBack={() => setShowCredits(false)} />
+    return <CreditsScreen onBack={onRestart} />
   }
 
   return (

@@ -4,6 +4,7 @@ import Intro from './screens/Intro'
 import HomeCard from './components/HomeCard'
 import LoadingTransition from './components/LoadingTransition'
 import RadialMenu from './components/RadialMenu'
+import EndCalm from './components/EndCalm'
 import type { NavScreen } from './components/RadialMenu'
 import { useSelectionAudio } from './hooks/useSelectionAudio'
 import './App.css'
@@ -50,6 +51,9 @@ function App() {
   // Generic transition: pending target + in-progress flag
   const [pendingNav, setPendingNav]     = useState<ExperienceType | null>(null)
   const [isNavTransition, setIsNavTransition] = useState(false)
+
+  // Reboucle de fin : écran calme puis retour à l'onboarding (depuis les crédits).
+  const [restarting, setRestarting]     = useState(false)
 
   // D'où l'expérience 3D a été lancée (pour y revenir au retour).
   const [modelOrigin, setModelOrigin]   = useState<ExperienceType>('intro')
@@ -112,6 +116,24 @@ function App() {
 
   const handleBackFromSettings = () => {
     setExperience('intro')
+  }
+
+  /* ── Reboucle vers l'onboarding (déclenchée depuis les crédits) ── */
+  const handleRestartExperience = () => {
+    stopAudio()
+    setRestarting(true) // affiche l'écran calme avant de reboucler
+  }
+
+  const finishRestart = () => {
+    setRestarting(false)
+    setPendingNav(null)
+    setIsNavTransition(false)
+    setIsTransitioning(false)
+    setIsReturning(false)
+    setExperience('intro')
+    setShowIntro(true)
+    setShowOnboarding(true)
+    window.history.pushState({}, '', PATHS.intro)
   }
 
   /* ── Generic nav transition (with LoadingTransition) ── */
@@ -187,7 +209,7 @@ function App() {
 
       {experience === 'settings' && (
         <Suspense fallback={null}>
-          <SettingsScreen onBack={handleBackFromSettings} />
+          <SettingsScreen onBack={handleBackFromSettings} onRestart={handleRestartExperience} />
         </Suspense>
       )}
 
@@ -247,6 +269,9 @@ function App() {
           onNavigate={handleBottomNav}
         />
       )}
+
+      {/* ── Écran calme de reboucle (crédits → onboarding) ── */}
+      {restarting && <EndCalm onContinue={finishRestart} />}
     </>
   )
 }
